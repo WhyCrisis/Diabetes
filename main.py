@@ -1,16 +1,29 @@
-# Это пример Python скрипта.
+#---
 
-# Нажмите Shift+F10 для выполнения или замените его своим кодом.
-# Нажмите Двойное нажатие Shift для поиска везде: классы, файлы, окна инструментов, действия и настройки.
+from os import getenv
+import asyncio
+from aiogram import Bot, Dispatcher
+from dotenv import load_dotenv
 
+#---
 
-def print_hi(name):
-    # Используйте точку останова в строке кода ниже для отладки скрипта.
-    print(f'Hi, {name}')  # Нажмите Ctrl+F8 для переключения точки останова.
+#---
 
+load_dotenv()
+TOKEN = getenv("BOT_TOKEN")
 
-# Нажмите зеленую кнопку на полях для запуска скрипта.
+#---
+
+#---
+#подключение новых роутеров.
+dp = Dispatcher()
+#---
+
+#---инициализация
+async def main():
+    bot = Bot(token=TOKEN)
+    print("Запущено")
+    await dp.start_polling(bot)
+#---
 if __name__ == '__main__':
-    print_hi('PyCharm')
-
-# Справка PyCharm доступна на https://www.jetbrains.com/help/pycharm/
+    asyncio.run(main())
