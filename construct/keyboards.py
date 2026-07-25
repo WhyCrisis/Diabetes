@@ -20,12 +20,12 @@ from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 def choose_language():
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
         [
-            InlineKeyboardButton(text="English 🇺🇸", callback_data="lang_en"),
-            InlineKeyboardButton(text="Русский 🇷🇺", callback_data="lang_ru")
+            InlineKeyboardButton(text="English 🇺🇸", callback_data="en"),
+            InlineKeyboardButton(text="Русский 🇷🇺", callback_data="ru")
         ],
         [
-            InlineKeyboardButton(text="Espanol 🇪🇸", callback_data="lang_es"),
-            InlineKeyboardButton(text="Українська 🇺🇦", callback_data="lang_ua")
+            InlineKeyboardButton(text="Espanol 🇪🇸", callback_data="es"),
+            InlineKeyboardButton(text="Українська 🇺🇦", callback_data="ua")
         ]
     ])
     return keyboard
