@@ -14,7 +14,7 @@ async def log_start():
             "CREATE TABLE IF NOT EXISTS users ("
             "id_user INT UNIQUE, "
             "language TEXT,"
-            "joinAT timestamp DEFAULT CURRENT_TIMESTAMP"
+            "joinAT timestamp DEFAULT CURRENT_TIMESTAMP )"
         )
         await db.execute(query)
 
@@ -25,3 +25,10 @@ async def add_user(id_user, language):
             (id_user, language)
         )
         await db.commit()
+
+#временная заглушка не забыть бы удалить позже
+async def get_user_anket():
+    async with aiosqlite.connect(DB_name) as db:
+        cursor = await db.execute("SELECT * FROM users ")
+        result = await cursor.fetchall()
+        return result
