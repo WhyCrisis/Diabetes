@@ -14,26 +14,19 @@ from construct.keyboards import choose_language
 from aiogram.fsm.context import FSMContext
 
 
-#----
-#FSM class
-from construct.FSMforms import Start
+
 #----
 #Databases
-from databases.database_SQlite import log_start, add_user
+from databases.database_SQlite import log_start, add_user, get_user_anket
 
 #----
 router = Router()
 #----
 
 
-#Стартуем фсм для записи и передачи в SQL
-
-
 
 @router.message(Command('start'))
-async def start(state: FSMContext, message: Message):
-        #обязательный перезапуск!
-        #await state.clear()
+async def start(message: Message):
 
     #Главное не забыть запустить бд
     await log_start()
@@ -42,11 +35,6 @@ async def start(state: FSMContext, message: Message):
     #надо бы найти конец, я думаю до главного экрана(?)
     #есть ли толк его делать вообще или хватит только старта?
 
-    #Запуск фсм
-        #iduser=message.from_user.id
-        #await state.set_state(Start.user_id)
-        #await state.update_data(user=iduser)
-    #Закончили запись ID юзера
 
     #даем выбор языка
     await message.answer(
@@ -60,25 +48,27 @@ async def start(state: FSMContext, message: Message):
 
 
 @router.callback_query(F.data.in_({"ru", "en", "es", "ua"}))
-async def process_any_language(callback: CallbackQuery, state: FSMContext):
+async def process_any_language(callback: CallbackQuery):
 
     #Захватили ответ
     user_id = callback.from_user.id
     language = callback.data
 
+    await callback.answer()
+    await add_user(user_id,language)
 
-    #Передали в ФСМ
-        #await state.set_state(Start.language)
-    #Сохранили в ФСМ
-        #await state.update_data(language=selected_lang)
-
-    #Вытягиваем из ФСМ и передаем в БД
-        #user_data = await state.get_data()
-        #user_id = user_data.get('user_id')   #айди
-        #language = user_data.get('language') #язык
-    await add_user(user_id,language)     #передали в бд
-
+    # Удаляем старое сообщение пишем новое
+    await callback.message.delete()
 
     await callback.message.answer(f"You selected: {language}")
-    await callback.answer()
+
+mainfiles/afterstartcommand.py
+#Временная заглушка, перенесу чуть позже!!!
+@router.message(Command('alo'))
+async def help(message: Message):
+    users = await get_user_anket()
+    text = 'Созданные анкеты:\n\n'
+    for user in users:
+        text += f"Айди: {user[0]} | Язык: {user[1]} | Штамп: {user[2]}\n"
+    await message.answer(text)
 
