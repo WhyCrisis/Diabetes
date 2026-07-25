@@ -10,14 +10,29 @@ from aiogram.types import (Message,ReplyKeyboardMarkup,
                            FSInputFile
                            )
 from aiogram.types import ReplyKeyboardRemove
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from construct.keyboards import choose_language
+from aiogram.fsm.context import FSMContext
+
+
+#----
+#FSM class
+from construct.FSMforms import Start
+#----
+
+
 #----
 router = Router()
 #----
 
+
+#Стартуем фсм для записи и передачи в SQL
+
+
+
 @router.message(Command('start'))
-async def start(message: Message):
+async def start(state: FSMContext, message: Message):
+    iduser=message.from_user.id
+    await state.update_data(user=iduser)
     await message.answer(
         text=(
             "<i>Hello!</i>\n"
