@@ -14,7 +14,7 @@ async def log_start():
             "CREATE TABLE IF NOT EXISTS users ("
             "id_user INT UNIQUE, "
             "language TEXT,"
-            "joinAT timestamp "
+            "joinAT timestamp DEFAULT CURRENT_TIMESTAMP"
         )
         await db.execute(query)
 
