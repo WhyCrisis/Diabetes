@@ -32,3 +32,9 @@ async def get_user_anket():
         cursor = await db.execute("SELECT * FROM users ")
         result = await cursor.fetchall()
         return result
+
+async def get_user_language(user_id):
+    async with aiosqlite.connect(DB_name) as db:
+        cursor = await db.execute("SELECT language FROM users WHERE id_user = ?", (user_id,))
+        result = await cursor.fetchone()
+        return result[0] if result else None
