@@ -11,6 +11,7 @@ from aiogram.types import (Message,ReplyKeyboardMarkup,
                            )
 from aiogram.types import ReplyKeyboardRemove
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+import json
 #----
 router = Router()
 #----
@@ -28,4 +29,21 @@ def choose_language():
             InlineKeyboardButton(text="Українська 🇺🇦", callback_data="ua")
         ]
     ])
+    return keyboard
+
+
+
+def get_rules_keyboard(language: str):
+    with open("language_pack/languages.json", "r", encoding="utf-8") as f:
+        rules_data = json.load(f)
+
+    # Если переданного языка нет в файле, берем английский по умолчанию
+    lang = language if language in rules_data else "en"
+    data = rules_data[lang]
+    keyboard = InlineKeyboardMarkup(
+        inline_keyboard=[
+            [InlineKeyboardButton(text=data["btn_rules"], url=data["rules_url"])],
+            [InlineKeyboardButton(text=data["btn_agree"], callback_data="agree")]
+        ]
+    )
     return keyboard
