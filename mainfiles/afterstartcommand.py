@@ -1,12 +1,14 @@
 #----
 import json
+import sqlite3
+
 from aiogram import Router, F
 from aiogram.filters import Command
 from aiogram.types import (Message,CallbackQuery)
 
 #----
 #Databases
-from databases.database_SQlite import log_start, add_user, get_user_anket, get_user_language
+from databases.database_SQlite import log_start, add_user, get_user_anket, get_user_language,delete_user
 
 #----
 #Keyboards
@@ -84,9 +86,18 @@ async def process_cancel(callback: CallbackQuery):
 #Временная заглушка, перенесу чуть позже!!!
 @router.message(Command('alo'))
 async def help(message: Message):
-    users = await get_user_anket()
-    text = 'Созданные анкеты:\n\n'
-    for user in users:
-        text += f"Айди: {user[0]} | Язык: {user[1]} | Штамп: {user[2]}\n"
-    await message.answer(text)
+    try:
+        users = await get_user_anket()
+        text = 'Созданные анкеты:\n\n'
+        for user in users:
+            text += f"Айди: {user[0]} | Язык: {user[1]} | Штамп: {user[2]}\n"
+        await message.answer(text)
 
+    except sqlite3.OperationalError as e:
+        await message.answer('Нихуя')
+
+@router.message(Command('nealo'))
+async def asdads(message: Message):
+    users = await delete_user()
+    text = 'ok'
+    await message.answer(text)
