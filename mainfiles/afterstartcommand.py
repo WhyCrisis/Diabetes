@@ -1,33 +1,23 @@
 #----
-import asyncio
 import json
 from aiogram import Router, F
-from aiogram.enums import ParseMode
 from aiogram.filters import Command
-from aiogram.types import (Message,ReplyKeyboardMarkup,
-                           KeyboardButton,
-                           InlineKeyboardButton,
-                           InlineKeyboardMarkup,
-                           CallbackQuery,
-                           FSInputFile
-                           )
-from aiogram.types import ReplyKeyboardRemove
-from construct.keyboards import choose_language,get_rules_keyboard
-from aiogram.fsm.context import FSMContext
-
-
-import language_pack
+from aiogram.types import (Message,CallbackQuery)
 
 #----
 #Databases
-from databases.database_SQlite import log_start, add_user, get_user_anket
+from databases.database_SQlite import log_start, add_user, get_user_anket, get_user_language
 
 #----
+#Keyboards
+from construct.keyboards import choose_language,get_rules_keyboard
+#----
+
 router = Router()
 #----
 
 #----
-with open("language_pack/languages.json", "r", encoding="utf-8") as f:
+with open("language_pack/languages_start.json", "r", encoding="utf-8") as f:
     TRANSLATIONS = json.load(f)
 def get_text(lang: str, key: str):
     return TRANSLATIONS.get(lang, {}).get(key, key)
@@ -59,12 +49,10 @@ async def start(message: Message):
 async def process_any_language(callback: CallbackQuery):
 
     #Захватили ответ
-    user_id = callback.from_user.id
     language = callback.data
 
     #Сохранили ответ
     await callback.answer()
-    await add_user(user_id,language)
 
     # Удаляем старое сообщение пишем новое
     await callback.message.delete()
@@ -74,6 +62,24 @@ async def process_any_language(callback: CallbackQuery):
 
     await callback.message.answer(text,reply_markup=keyboard)
 
+
+@router.callback_query(F.data.startswith('agree_'))
+async def process_language(callback: CallbackQuery):
+
+    #Сохраняем
+    user_id = callback.from_user.id
+    language = callback.data[-2:]
+    #Передаем в БД
+    await add_user(user_id, language)
+    #Вызываем главное меню на нужном языке удалив прошлое окно
+
+
+
+
+@router.callback_query(F.data=='cancel')
+async def process_cancel(callback: CallbackQuery):
+    await callback.message.delete()
+    await start(callback.message)
 
 #Временная заглушка, перенесу чуть позже!!!
 @router.message(Command('alo'))
