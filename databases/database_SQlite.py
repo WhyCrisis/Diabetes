@@ -1,5 +1,6 @@
 #Логика взята из конструктора из моего проекта, и что ты мне сделаешь а?
 #Думаю что тут буду хранить логику SQlite что бы быстрее к ней обращаться, а основное будет лежать в PG
+import sqlite3
 import aiosqlite
 from aiogram import Router
 
@@ -29,12 +30,29 @@ async def add_user(id_user, language):
 #временная заглушка не забыть бы удалить позже
 async def get_user_anket():
     async with aiosqlite.connect(DB_name) as db:
-        cursor = await db.execute("SELECT * FROM users ")
-        result = await cursor.fetchall()
-        return result
+        try:
+            cursor = await db.execute("SELECT * FROM users ")
+            result = await cursor.fetchall()
+            return result
+
+        except sqlite3.OperationalError as e:
+            query = (
+                "CREATE TABLE IF NOT EXISTS users ("
+                "id_user INT UNIQUE, "
+                "language TEXT,"
+                "joinAT timestamp DEFAULT CURRENT_TIMESTAMP )"
+            )
+            await db.execute(query)
+            await db.commit()
+            return []
 
 async def get_user_language(user_id):
     async with aiosqlite.connect(DB_name) as db:
         cursor = await db.execute("SELECT language FROM users WHERE id_user = ?", (user_id,))
         result = await cursor.fetchone()
         return result[0] if result else None
+
+async def delete_user():
+    async with aiosqlite.connect(DB_name) as db:
+        cursor = await db.execute("DROP TABLE users ")
+        await db.commit()
