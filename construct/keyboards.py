@@ -34,7 +34,7 @@ def choose_language():
 
 
 def get_rules_keyboard(language: str):
-    with open("language_pack/languages.json", "r", encoding="utf-8") as f:
+    with open("language_pack/languages_start.json", "r", encoding="utf-8") as f:
         rules_data = json.load(f)
 
     # Если переданного языка нет в файле, берем английский по умолчанию
@@ -43,7 +43,8 @@ def get_rules_keyboard(language: str):
     keyboard = InlineKeyboardMarkup(
         inline_keyboard=[
             [InlineKeyboardButton(text=data["btn_rules"], url=data["rules_url"])],
-            [InlineKeyboardButton(text=data["btn_agree"], callback_data="agree")]
+            [InlineKeyboardButton(text=data["btn_agree"], callback_data=f"agree_{language}")],
+            [InlineKeyboardButton(text='⬅️Change language⬅️', callback_data="cancel")]
         ]
     )
     return keyboard
