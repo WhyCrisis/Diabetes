@@ -6,15 +6,17 @@ from aiogram import Router, F
 from aiogram.filters import Command
 from aiogram.types import (Message,CallbackQuery)
 
+from aiogram.fsm.context import FSMContext
 #----
 #Databases
-from databases.database_SQlite import log_start, add_user, get_user_anket, get_user_language,delete_user
+from databases.database_SQlite import log_start, add_user, get_user_anket, delete_user
 
 #----
 #Keyboards
 from construct.keyboards import choose_language,get_rules_keyboard
 #----
 
+#----
 router = Router()
 #----
 
@@ -27,15 +29,10 @@ def get_text(lang: str, key: str):
 
 
 @router.message(Command('start'))
-async def start(message: Message):
-
+async def start(message: Message, state: FSMContext):
     #Главное не забыть запустить бд
     await log_start()
-
-    #надо бы найти конец, я думаю до главного экрана(?)
-    #есть ли толк его делать вообще или хватит только старта?
-
-
+    await state.clear()
     #даем выбор языка
     await message.answer(
         text=(
@@ -74,6 +71,7 @@ async def process_language(callback: CallbackQuery):
     #Передаем в БД
     await add_user(user_id, language)
     #Вызываем главное меню на нужном языке удалив прошлое окно
+    await callback.answer()
 
 
 
