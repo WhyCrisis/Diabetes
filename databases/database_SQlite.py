@@ -50,7 +50,9 @@ async def get_user_language(user_id):
     async with aiosqlite.connect(DB_name) as db:
         cursor = await db.execute("SELECT language FROM users WHERE id_user = ?", (user_id,))
         result = await cursor.fetchone()
-        return result[0] if result else None
+        if result is None:
+            return None
+        return result[0]
 
 async def delete_user():
     async with aiosqlite.connect(DB_name) as db:
