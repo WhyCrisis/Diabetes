@@ -43,7 +43,7 @@ def get_rules_keyboard(language: str):
     keyboard = InlineKeyboardMarkup(
         inline_keyboard=[
             [InlineKeyboardButton(text=data["btn_rules"], url=data["rules_url"])],
-            [InlineKeyboardButton(text=data["btn_agree"], callback_data=f"agree_{language}")],
+            [InlineKeyboardButton(text=data["btn_agree"], callback_data=f"agree")],
             [InlineKeyboardButton(text='⬅️Change language⬅️', callback_data="cancel")]
         ]
     )
