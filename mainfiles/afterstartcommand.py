@@ -15,7 +15,8 @@ from databases.database_SQlite import log_start, add_user, get_user_anket, delet
 #Keyboards
 from construct.keyboards import choose_language,get_rules_keyboard
 #----
-
+#FSM
+from mainfiles.FSM import Form
 #----
 router = Router()
 #----
@@ -33,6 +34,7 @@ async def start(message: Message, state: FSMContext):
     #Главное не забыть запустить бд
     await log_start()
     await state.clear()
+    await state.set_state(Form.lang)
     #даем выбор языка
     await message.answer(
         text=(
@@ -45,10 +47,11 @@ async def start(message: Message, state: FSMContext):
 
 
 @router.callback_query(F.data.in_({"ru", "en", "es", "ua"}))
-async def process_any_language(callback: CallbackQuery):
+async def process_any_language(callback: CallbackQuery, state: FSMContext):
 
     #Захватили ответ
-    language = callback.data
+    language = callback.data[-2:]
+    await state.update_data(lang=language)
 
     #Сохранили ответ
     await callback.answer()
@@ -62,24 +65,23 @@ async def process_any_language(callback: CallbackQuery):
     await callback.message.answer(text,reply_markup=keyboard)
 
 
-@router.callback_query(F.data.startswith('agree_'))
-async def process_language(callback: CallbackQuery):
+@router.callback_query(F.data == 'agree')
+async def process_agree(callback: CallbackQuery, state: FSMContext):
 
-    #Сохраняем
+    data = await state.get_data()
     user_id = callback.from_user.id
-    language = callback.data[-2:]
+    language = data['lang']
     #Передаем в БД
     await add_user(user_id, language)
     #Вызываем главное меню на нужном языке удалив прошлое окно
     await callback.answer()
-
-
+    await state.clear()
 
 
 @router.callback_query(F.data=='cancel')
-async def process_cancel(callback: CallbackQuery):
+async def process_cancel(callback: CallbackQuery, state: FSMContext):
     await callback.message.delete()
-    await start(callback.message)
+    await start(callback.message, state)
 
 #Временная заглушка, перенесу чуть позже!!!
 @router.message(Command('alo'))
