@@ -58,3 +58,9 @@ async def delete_user():
     async with aiosqlite.connect(DB_name) as db:
         cursor = await db.execute("DROP TABLE users ")
         await db.commit()
+
+async def restart():
+    async with aiosqlite.connect(DB_name) as db:
+            cursor = await db.execute("SELECT id_user FROM users ")
+            result = await cursor.fetchall()
+            return result
