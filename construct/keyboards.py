@@ -43,8 +43,14 @@ def get_rules_keyboard(language: str):
     keyboard = InlineKeyboardMarkup(
         inline_keyboard=[
             [InlineKeyboardButton(text=data["btn_rules"], url=data["rules_url"])],
-            [InlineKeyboardButton(text=data["btn_agree"], callback_data=f"agree")],
+            [InlineKeyboardButton(text=data["btn_agree"], callback_data=f"agree_menu")],
             [InlineKeyboardButton(text='⬅️Change language⬅️', callback_data="cancel")]
         ]
     )
+    return keyboard
+
+def back_if_broken():
+    keyboard = InlineKeyboardMarkup(
+        inline_keyboard=
+        [InlineKeyboardButton(text='♻️RESTART♻️', callback_data='restart')])
     return keyboard

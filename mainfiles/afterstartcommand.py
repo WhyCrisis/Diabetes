@@ -65,7 +65,7 @@ async def process_any_language(callback: CallbackQuery, state: FSMContext):
     await callback.message.answer(text,reply_markup=keyboard)
 
 
-@router.callback_query(F.data == 'agree')
+@router.callback_query(F.data.starts_with('agree_'))
 async def process_agree(callback: CallbackQuery, state: FSMContext):
 
     data = await state.get_data()
