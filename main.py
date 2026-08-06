@@ -1,4 +1,5 @@
-#---
+
+from dbm import sqlite3
 from os import getenv
 import asyncio
 from aiogram import Bot, Dispatcher
@@ -11,7 +12,8 @@ from construct.keyboards import router as constructor_router
 from databases.database_SQlite import router as database_router
 from mainfiles.main_menu import router as menu_router
 #---
-
+from databases.database_SQlite import log_start
+#---
 load_dotenv()
 TOKEN = getenv("BOT_TOKEN")
 DB_name = "DB_start"
@@ -25,12 +27,19 @@ dp.include_router(constructor_router)
 dp.include_router(database_router)
 dp.include_router(menu_router)
 #---
+
+
 #---рассылка
 async def if_restart_db():
-    async with aiosqlite.connect(DB_name) as db:
-        cursor = await db.execute("SELECT id_user FROM users ")
-        users = await cursor.fetchall()
-        return users
+    await log_start()
+    try:
+        async with aiosqlite.connect(DB_name) as db:
+            cursor = await db.execute("SELECT id_user FROM users ")
+            users = await cursor.fetchall()
+            return users
+    except sqlite3.OperationalError as e:
+            print(f'Ошибка при подключении к базе данных: {e}')
+            return []
 
 async def sending(bot: Bot):
     users = await if_restart_db()
@@ -41,8 +50,7 @@ async def sending(bot: Bot):
             await asyncio.sleep(1)
         except Exception as e:
             print(f'Не удалось отправить сообщение некоторым пользователям: {user_id}')
-
-
+#---
 
 #---инициализация
 async def main():
