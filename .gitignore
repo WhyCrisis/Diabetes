@@ -3,3 +3,6 @@
 .idea/
 .env
 DB_start
+.gitignore
+#почему
+
