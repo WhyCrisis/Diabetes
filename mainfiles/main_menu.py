@@ -30,13 +30,12 @@ router = Router()
 
 
 
-@router.callback_query(F.data.in_({"menu"}))
-async def launch_menu(callback: CallbackQuery):
-    user_id = callback.from_user.id
+
+async def launch_menu(message:Message, user_id: int):
     language = await get_user_language(user_id)
 
     if language is None:
-        await callback.message.answer(
+        await message.answer(
             text=(
                 'Sorry! We cant find your language preferences! \n'
                 'Please restart the bot using button below!\n'
@@ -45,7 +44,7 @@ async def launch_menu(callback: CallbackQuery):
                 reply_markup =back_if_broken())
 
     text = get_text(language, 'main_menu_lang')
-    await callback.message.answer(text)
+    await message.answer(text)
 
     
 
