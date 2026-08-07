@@ -4,27 +4,24 @@
         "rules_url": "https://telegra.ph/Terms-Of-Conditions-07-26",
         "btn_rules": "Прочитать Правила",
         "btn_agree": "Я прочитал(а) и согласен(на) с правилами ✅",
-        "main_menu_lang":
+        "main_menu_lang":"Попа ахвхахавха"
     },
     "en": {
         "selected_lang": "You selected: English\n\nTo continue, please read the terms of use.",
         "rules_url": "https://telegra.ph/Terms-of-conditions-07-26-2",
         "btn_rules": "Read rules",
-        "btn_agree": "I have read and agree to the rules ✅",
-        "main_menu_lang":
+        "btn_agree": "I have read and agree to the rules ✅"
     },
     "es": {
         "selected_lang": "Has seleccionado: Español\n\nPara continuar, por favor lea los términos de uso.",
         "rules_url": "https://telegra.ph/T%C3%A9rminos-y-Condiciones-07-26",
         "btn_rules": "Leer reglas",
         "btn_agree": "He leído y acepto las reglas ✅"
-        "main_menu_lang":
     },
     "ua": {
         "selected_lang": "Ви обрали: Українську\n\nЩоб продовжити, будь ласка, ознайомтеся з умовами використання.",
         "rules_url": "https://telegra.ph/Umovi-vikoristannya-Terms-of-Service-07-26",
         "btn_rules": "Прочитати Правила",
-        "btn_agree": "Я прочитав(-ла) і погоджуюся з правилами ✅",
-        "main_menu_lang":
+        "btn_agree": "Я прочитав(-ла) і погоджуюся з правилами ✅"
     }
 }
