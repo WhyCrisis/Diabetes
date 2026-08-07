@@ -14,6 +14,7 @@ from databases.database_SQlite import log_start, add_user, get_user_anket, delet
 #----
 #Keyboards
 from construct.keyboards import choose_language,get_rules_keyboard
+from mainfiles import main_menu
 #----
 #FSM
 from mainfiles.FSM import Form
@@ -65,7 +66,7 @@ async def process_any_language(callback: CallbackQuery, state: FSMContext):
     await callback.message.answer(text,reply_markup=keyboard)
 
 
-@router.callback_query(F.data.starts_with('agree_'))
+@router.callback_query(F.data.startswith('agree_'))
 async def process_agree(callback: CallbackQuery, state: FSMContext):
 
     data = await state.get_data()
@@ -74,8 +75,8 @@ async def process_agree(callback: CallbackQuery, state: FSMContext):
     #Передаем в БД
     await add_user(user_id, language)
     #Вызываем главное меню на нужном языке удалив прошлое окно
-    await callback.answer()
     await state.clear()
+    await main_menu.launch_menu(callback.message, user_id)
 
 
 @router.callback_query(F.data=='cancel')
