@@ -1,0 +1,30 @@
+{
+    "ru": {
+        "selected_lang": "Ты выбрал: Русский\n\nДля продолжения пожалуйста прочитайте правила пользования. ",
+        "rules_url": "https://telegra.ph/Terms-Of-Conditions-07-26",
+        "btn_rules": "Прочитать Правила",
+        "btn_agree": "Я прочитал(а) и согласен(на) с правилами ✅",
+        "main_menu_lang":"<b>Главное меню</b> \uD83D\uDCA7 \n────────────────────── \nВыберите нужный раздел на панели ниже: \n\n\uD83D\uDCDD <b>Запись</b> — внести текущие показатели сахара\n\uD83D\uDCCA <b>Показания</b> — посмотреть историю записей\n\uD83D\uDCC1 <b>Экспорт</b> — выгрузить данные\n\uD83D\uDC64 <b>Профиль</b> — настройки и информация"
+    },
+    "en": {
+        "selected_lang": "You selected: English\n\nTo continue, please read the terms of use.",
+        "rules_url": "https://telegra.ph/Terms-of-conditions-07-26-2",
+        "btn_rules": "Read rules",
+        "btn_agree": "I have read and agree to the rules ✅",
+        "main_menu_lang":"<b>Main Menu</b> 💧 \n────────────────────── \nChoose the desired section on the panel below: \n\n📝 <b>Record</b> — enter current sugar levels\n📊 <b>Records</b> — view entry history\n📁 <b>Export</b> — export data\n👤 <b>Profile</b> — settings and information"
+    },
+    "es": {
+        "selected_lang": "Has seleccionado: Español\n\nPara continuar, por favor lea los términos de uso.",
+        "rules_url": "https://telegra.ph/T%C3%A9rminos-y-Condiciones-07-26",
+        "btn_rules": "Leer reglas",
+        "btn_agree": "He leído y acepto las reglas ✅",
+        "main_menu_lang":"<b>Menú principal</b> 💧 \n────────────────────── \nSelecciona la sección deseada en el panel de abajo: \n\n📝 <b>Registro</b> — ingresar niveles de azúcar actuales\n📊 <b>Historial</b> — ver el historial de registros\n📁 <b>Exportar</b> — exportar datos\n👤 <b>Perfil</b> — configuración e información"
+    },
+    "ua": {
+        "selected_lang": "Ви обрали: Українську\n\nЩоб продовжити, будь ласка, ознайомтеся з умовами використання.",
+        "rules_url": "https://telegra.ph/Umovi-vikoristannya-Terms-of-Service-07-26",
+        "btn_rules": "Прочитати Правила",
+        "btn_agree": "Я прочитав(-ла) і погоджуюся з правилами ✅",
+        "main_menu_lang":"<b>Головне меню</b> 💧 \n────────────────────── \nВиберіть потрібний розділ на панелі нижче: \n\n📝 <b>Запис</b> — внести поточні показники цукру\n📊 <b>Показники</b> — переглянути історію записів\n📁 <b>Експорт</b> — вивантажити дані\n👤 <b>Профіль</b> — налаштування та інформація"
+    }
+}
