@@ -20,7 +20,7 @@ from databases.database_SQlite import get_user_language
 #keyboards
 from construct.keyboards import back_if_broken
 #----
-with open("language_pack/languages_start.json", "r", encoding="utf-8") as f:
+with open("language_pack/languages_pack.json", "r", encoding="utf-8") as f:
     TRANSLATIONS = json.load(f)
 def get_text(lang: str, key: str):
     return TRANSLATIONS.get(lang, {}).get(key, key)
@@ -43,7 +43,7 @@ async def launch_menu(message:Message, user_id: int):
         return
 
     text = get_text(language, 'main_menu_lang')
-    await message.answer(text)
+    await message.answer(text, parse_mode='HTML')
 
     
 

@@ -34,7 +34,7 @@ def choose_language():
 
 
 def get_rules_keyboard(language: str):
-    with open("language_pack/languages_start.json", "r", encoding="utf-8") as f:
+    with open("language_pack/languages_pack.json", "r", encoding="utf-8") as f:
         rules_data = json.load(f)
 
     # Если переданного языка нет в файле, берем английский по умолчанию

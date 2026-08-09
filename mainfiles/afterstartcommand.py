@@ -23,7 +23,7 @@ router = Router()
 #----
 
 #----
-with open("language_pack/languages_start.json", "r", encoding="utf-8") as f:
+with open("language_pack/languages_pack.json", "r", encoding="utf-8") as f:
     TRANSLATIONS = json.load(f)
 def get_text(lang: str, key: str):
     return TRANSLATIONS.get(lang, {}).get(key, key)
