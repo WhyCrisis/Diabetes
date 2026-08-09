@@ -9,11 +9,11 @@ from aiogram.types import (Message,CallbackQuery)
 from aiogram.fsm.context import FSMContext
 #----
 #Databases
-from databases.database_SQlite import log_start, add_user, get_user_anket, delete_user
+from databases.database_SQlite import log_start, add_user, get_user_anket, delete_user, get_user_language
 
 #----
 #Keyboards
-from construct.keyboards import choose_language,get_rules_keyboard
+from construct.keyboards import choose_language,get_rules_keyboard,hard_reset
 from mainfiles import main_menu
 #----
 #FSM
@@ -28,23 +28,34 @@ with open("language_pack/languages_start.json", "r", encoding="utf-8") as f:
 def get_text(lang: str, key: str):
     return TRANSLATIONS.get(lang, {}).get(key, key)
 #----
-
+@router.callback_query(F.data == 'restart')
+async def process_restart(callback: CallbackQuery):
+    await callback.answer()
+    await callback.message.delete()
+    await start(callback.message)
 
 @router.message(Command('start'))
 async def start(message: Message, state: FSMContext):
-    #Главное не забыть запустить бд
+
     await log_start()
-    await state.clear()
-    await state.set_state(Form.lang)
-    #даем выбор языка
-    await message.answer(
-        text=(
-            "<i>Hello!</i>\n"
-            "Lets get started with basic settings!\n\n"
-            "<b>First</b>..what language do you perform more? Choose it from below"
-        ),
+    user_id = message.from_user.id
+    lang = await get_user_language(user_id)
+
+    if lang is None:
+        # Главное не забыть запустить бд
+        await state.clear()
+        await state.set_state(Form.lang)
+        # даем выбор языка
+        await message.answer(
+            text=(
+                "<i>Hello!</i>\n"
+                "Lets get started with basic settings!\n\n"
+                "<b>First</b>..what language do you perform more? Choose it from below"
+            ),
             parse_mode='HTML',
             reply_markup=choose_language())
+    else:
+        await main_menu.launch_menu(message, user_id)
 
 
 @router.callback_query(F.data.in_({"ru", "en", "es", "ua"}))
@@ -76,6 +87,8 @@ async def process_agree(callback: CallbackQuery, state: FSMContext):
     await add_user(user_id, language)
     #Вызываем главное меню на нужном языке удалив прошлое окно
     await state.clear()
+    await callback.answer()
+    await callback.message.delete()
     await main_menu.launch_menu(callback.message, user_id)
 
 
@@ -87,18 +100,20 @@ async def process_cancel(callback: CallbackQuery, state: FSMContext):
 #Временная заглушка, перенесу чуть позже!!!
 @router.message(Command('alo'))
 async def help(message: Message):
-    try:
         users = await get_user_anket()
-        text = 'Созданные анкеты:\n\n'
+
+        if not users:
+            await message.answer('База пустая')
+            return
+
+        text = 'Текущие пользователи:\n\n'
         for user in users:
             text += f"Айди: {user[0]} | Язык: {user[1]} | Штамп: {user[2]}\n"
-        await message.answer(text)
+        await message.answer(text,reply_markup=hard_reset())
 
-    except sqlite3.OperationalError as e:
-        await message.answer('Нихуя')
 
-@router.message(Command('nealo'))
-async def asdads(message: Message):
-    users = await delete_user()
-    text = 'ok'
-    await message.answer(text)
+@router.callback_query(F.data == 'DELETE')
+async def asdads(callback: CallbackQuery):
+    await callback.answer()
+    await delete_user()
+    await callback.message.answer('deleted')
