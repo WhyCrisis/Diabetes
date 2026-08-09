@@ -97,23 +97,3 @@ async def process_cancel(callback: CallbackQuery, state: FSMContext):
     await callback.message.delete()
     await start(callback.message, state)
 
-#Временная заглушка, перенесу чуть позже!!!
-@router.message(Command('alo'))
-async def help(message: Message):
-        users = await get_user_anket()
-
-        if not users:
-            await message.answer('База пустая')
-            return
-
-        text = 'Текущие пользователи:\n\n'
-        for user in users:
-            text += f"Айди: {user[0]} | Язык: {user[1]} | Штамп: {user[2]}\n"
-        await message.answer(text,reply_markup=hard_reset())
-
-
-@router.callback_query(F.data == 'DELETE')
-async def asdads(callback: CallbackQuery):
-    await callback.answer()
-    await delete_user()
-    await callback.message.answer('deleted')
