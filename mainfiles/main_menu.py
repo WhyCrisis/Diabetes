@@ -29,19 +29,18 @@ router = Router()
 #----
 
 
-
-
 async def launch_menu(message:Message, user_id: int):
     language = await get_user_language(user_id)
 
     if language is None:
         await message.answer(
             text=(
-                'Sorry! We cant find your language preferences! \n'
-                'Please restart the bot using button below!\n'
+                "Sorry! We can't find your language preferences! \n"
+                "Please restart the bot using button below!\n"
                 ),
-                ParseMode = 'HTML',
+                parse_mode = 'HTML',
                 reply_markup =back_if_broken())
+        return
 
     text = get_text(language, 'main_menu_lang')
     await message.answer(text)
