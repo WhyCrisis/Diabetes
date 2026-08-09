@@ -51,6 +51,16 @@ def get_rules_keyboard(language: str):
 
 def back_if_broken():
     keyboard = InlineKeyboardMarkup(
-        inline_keyboard=
-        [InlineKeyboardButton(text='♻️RESTART♻️', callback_data='restart')])
+        inline_keyboard= [
+            [InlineKeyboardButton(text='♻️RESTART♻️', callback_data='restart')]
+        ]
+    )
+    return keyboard
+
+def hard_reset():
+    keyboard = InlineKeyboardMarkup(
+        inline_keyboard= [
+            [InlineKeyboardButton(text='♻️DELETE♻️', callback_data='DELETE')]
+        ]
+    )
     return keyboard
