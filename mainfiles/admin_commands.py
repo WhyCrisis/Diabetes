@@ -1,6 +1,7 @@
 #----
 from os import getenv
 from aiogram import Router, F, Bot
+from aiogram.enums import parse_mode
 from aiogram.filters import Command
 from aiogram.types import (Message,CallbackQuery)
 from dotenv import load_dotenv
@@ -16,7 +17,7 @@ from databases.database_SQlite import get_user_anket, delete_user
 
 #----
 #Keyboards
-from construct.keyboards import choose_language,get_rules_keyboard,hard_reset
+from construct.keyboards import choose_language,get_rules_keyboard,hard_reset, fast_admin_things
 #----
 router.message.filter(F.from_user.id == auid)
 router.callback_query.filter(F.from_user.id == auid)
@@ -42,16 +43,17 @@ async def asdads(callback: CallbackQuery):
 
 @router.message(Command('admin_menu_with_things'))
 async def admin_menu_with_things(message: Message):
-    if F.from_user.id != auid:
-        await message.answer('Access Denied')
-        return
-
-    else:
-
+    if F.from_user.id == auid:
+        who = 0
         text =(f''
                f'Diabetes bot\n'
                f'-------------------------\n\n\n'
-               f'Привет\n. Общая сводка:\n'
-               f'Количество пользователей:<b>{}</b>\n'
-               f'Популярный язык:<b>{}</b>\n'
-               f'Последняя регистрация:<b>{}</b>\n')
+               f'Привет. Общая сводка:\n'
+               f'Количество пользователей: <b>{who}</b>\n'
+               f'Популярный язык: <b>{who}</b>\n'
+               f'Последняя регистрация: <b>{who}</b>\n')
+        parse_mode = 'HTML'
+        reply_markup = fast_admin_things()
+        await message.answer(text,parse_mode=parse_mode,reply_markup=reply_markup)
+    else:
+        message.answer('Denied')
