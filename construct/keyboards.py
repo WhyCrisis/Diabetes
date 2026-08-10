@@ -2,12 +2,12 @@
 from aiogram import Router, F
 from aiogram.enums import ParseMode
 from aiogram.filters import Command
-from aiogram.types import (Message,ReplyKeyboardMarkup,
+from aiogram.types import (Message, ReplyKeyboardMarkup,
                            KeyboardButton,
                            InlineKeyboardButton,
                            InlineKeyboardMarkup,
                            CallbackQuery,
-                           FSInputFile
+                           FSInputFile, inline_keyboard_button
                            )
 from aiogram.types import ReplyKeyboardRemove
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
@@ -61,6 +61,18 @@ def hard_reset():
     keyboard = InlineKeyboardMarkup(
         inline_keyboard= [
             [InlineKeyboardButton(text='♻️DELETE♻️', callback_data='DELETE')]
+        ]
+    )
+    return keyboard
+
+def fast_admin_things():
+    keyboard = InlineKeyboardMarkup(
+        inline_keyboard= [
+            [InlineKeyboardButton(text='⛔️Drop Database⛔️', callback_data="drop")],
+            [InlineKeyboardButton(text='🚪Admin🚪', callback_data="admin")],
+            [InlineKeyboardButton(text='🗑Delete user🗑', callback_data="delete_user")],
+            [InlineKeyboardButton(text='🛡Ban user🛡', callback_data="spermban")],
+            [InlineKeyboardButton(text='📩Send message to user or users📩', callback_data="send_message")]
         ]
     )
     return keyboard
