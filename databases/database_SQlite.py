@@ -27,7 +27,6 @@ async def add_user(id_user, language):
         )
         await db.commit()
 
-#временная заглушка не забыть бы удалить позже
 async def get_user_anket():
     async with aiosqlite.connect(DB_name) as db:
         try:
@@ -54,13 +53,42 @@ async def get_user_language(user_id):
             return None
         return result[0]
 
+
+
+#админские штучки
 async def delete_user():
     async with aiosqlite.connect(DB_name) as db:
         cursor = await db.execute("DROP TABLE users ")
         await db.commit()
 
-async def restart():
+async def spam():
     async with aiosqlite.connect(DB_name) as db:
             cursor = await db.execute("SELECT id_user FROM users ")
             result = await cursor.fetchall()
             return result
+
+async def admins():
+    async with aiosqlite.connect(DB_name) as db:
+        query = (
+            "CREATE TABLE IF NOT EXISTS admins "
+            "id_user INT UNIQUE, "
+            "role TEXT(20),"
+            "assigned timestamp DEFAULT CURRENT_TIMESTAMP )"
+        )
+        await db.execute(query)
+        await db.commit()
+        return []
+
+async def see_admins():
+    async with aiosqlite.connect(DB_name) as db:
+        cursor = await db.execute("SELECT * FROM admins ")
+        result = await cursor.fetchall()
+        return result
+
+async def add_admin(id_user, role):
+    async with aiosqlite.connect(DB_name) as db:
+        await db.execute(
+            "INSERT OR IGNORE INTO admins (id_user, role) VALUES (?, ?)",
+            (id_user, role)
+        )
+        await db.commit()
