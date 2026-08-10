@@ -13,7 +13,7 @@ print(auid)
 router = Router()
 #----
 #Databases
-from databases.database_SQlite import get_user_anket, delete_user
+from databases.database_SQlite import get_user_anket, delete_user, get_stats_last_join, get_stats_user_language, get_stats_user_count
 
 #----
 #Keyboards
@@ -44,14 +44,16 @@ async def asdads(callback: CallbackQuery):
 @router.message(Command('admin_menu_with_things'))
 async def admin_menu_with_things(message: Message):
     if F.from_user.id == auid:
-        who = 0
+        users = await get_stats_user_count()
+        top = await get_stats_user_language()
+        last = await get_stats_last_join()
         text =(f''
                f'Diabetes bot\n'
                f'-------------------------\n\n\n'
                f'Привет. Общая сводка:\n'
-               f'Количество пользователей: <b>{who}</b>\n'
-               f'Популярный язык: <b>{who}</b>\n'
-               f'Последняя регистрация: <b>{who}</b>\n')
+               f'Количество пользователей: <b>{users}</b>\n'
+               f'Популярный язык: <b>{top}</b>\n'
+               f'Последняя регистрация: <b>{last} GMC +3</b>\n')
         parse_mode = 'HTML'
         reply_markup = fast_admin_things()
         await message.answer(text,parse_mode=parse_mode,reply_markup=reply_markup)
