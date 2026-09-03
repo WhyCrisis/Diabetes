@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 from mainfiles.admin_commands import router as admin_router
 from mainfiles.afterstartcommand import router as starter_router
 from construct.keyboards import router as constructor_router
-from databases.database_SQlite import router as database_router
+from databases.database_SQlite import router as database_router, log_start
 from mainfiles.main_menu import router as menu_router
 #---
 load_dotenv()
@@ -28,7 +28,9 @@ dp.include_router(menu_router)
 async def main():
     bot = Bot(token=TOKEN)
     print("Запущено")
+    await log_start()
     await dp.start_polling(bot)
+
 #---
 if __name__ == '__main__':
     asyncio.run(main())
