@@ -76,3 +76,11 @@ def fast_admin_things():
         ]
     )
     return keyboard
+
+def delete_db():
+    keyboard = InlineKeyboardMarkup(
+        inline_keyboard= [
+            [InlineKeyboardButton(text='I know what am i doing', callback_data="are_you_sure")]
+        ]
+    )
+    return keyboard
