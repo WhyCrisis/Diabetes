@@ -17,7 +17,7 @@ from databases.database_SQlite import get_user_anket, delete_user, get_stats_las
 
 #----
 #Keyboards
-from construct.keyboards import choose_language,get_rules_keyboard,hard_reset, fast_admin_things
+from construct.keyboards import choose_language,get_rules_keyboard,hard_reset, fast_admin_things, delete_db
 #----
 router.message.filter(F.from_user.id == auid)
 router.callback_query.filter(F.from_user.id == auid)
@@ -35,11 +35,13 @@ async def help(message: Message):
         await message.answer(text,reply_markup=hard_reset())
 
 
-@router.callback_query(F.data == 'DELETE')
+@router.callback_query(F.data == 'drop')
 async def asdads(callback: CallbackQuery):
+    text = ('This command is <b>PERMANENT</b>!/n That means that no undo of that!/n To proceed push button below')
+    parse_mode = 'HTML'
     await callback.answer()
-    await delete_user()
-    await callback.message.answer('deleted')
+    await message.answer(text,parse_mode=parse_mode,reply_markup=delete_db())
+
 
 @router.message(Command('admin_menu_with_things'))
 async def admin_menu_with_things(message: Message):
