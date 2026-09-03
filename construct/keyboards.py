@@ -80,7 +80,8 @@ def fast_admin_things():
 def delete_db():
     keyboard = InlineKeyboardMarkup(
         inline_keyboard= [
-            [InlineKeyboardButton(text='I know what am i doing', callback_data="are_you_sure")]
+            [InlineKeyboardButton(text='✅I know what am i doing✅', callback_data="drop_admin")],
+            [InlineKeyboardButton(text='⛔️Back⛔️', callback_data="back_to_admin")]
         ]
     )
     return keyboard
