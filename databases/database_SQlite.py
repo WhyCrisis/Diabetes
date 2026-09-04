@@ -1,6 +1,8 @@
 #Логика взята из конструктора из моего проекта, и что ты мне сделаешь а?
 #Думаю что тут буду хранить логику SQlite что бы быстрее к ней обращаться, а основное будет лежать в PG
 import sqlite3
+from argparse import Action
+
 import aiosqlite
 from aiogram import Router
 
@@ -58,7 +60,7 @@ async def get_user_language(user_id):
 
 #Админские команды
 
-DB_name_2="admin.db"
+DB_name_2="log_admin"
 
 #-----Использование базы users-------------
 
@@ -110,19 +112,28 @@ async def get_stats_user_language():
 
 
 #-----Использование базы admins--------------
-async def see_admins():
-    async with aiosqlite.connect(DB_name_2) as db:
-        async with db.execute("SELECT * FROM admins ") as cursor:
-            result = await cursor.fetchall()
-            return result
 
-async def add_admin(id_user, role):
+async def log_admin():
     async with aiosqlite.connect(DB_name_2) as db:
-        await db.execute(
-            "INSERT OR IGNORE INTO admins (id_user, role) VALUES (?, ?)",
-            (id_user, role)
+        query = (
+            "CREATE TABLE IF NOT EXISTS admins_logs ("
+            "id_user INT UNIQUE, "
+            "Action TEXT,"
+            "Time timestamp DEFAULT CURRENT_TIMESTAMP )"
         )
+        await db.execute(query)
         await db.commit()
+
+async def do_admin(id_user, Action):
+    async with aiosqlite.connect(DB_name_2) as db:
+        query = (
+        "INSERT OR IGNORE INTO admins_logs (id_user, Action) VALUES (?, ?)",
+        (id_user, Action)
+        )
+        await db.commit(query)
+
+
+
 
 
 #-------------------------------------------КОНЕЦ
