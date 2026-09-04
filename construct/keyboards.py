@@ -60,7 +60,7 @@ def back_if_broken():
 def hard_reset():
     keyboard = InlineKeyboardMarkup(
         inline_keyboard= [
-            [InlineKeyboardButton(text='♻️DELETE♻️', callback_data='DELETE')]
+            [InlineKeyboardButton(text='♻️DELETE♻️', callback_data='delete')]
         ]
     )
     return keyboard
@@ -69,9 +69,8 @@ def fast_admin_things():
     keyboard = InlineKeyboardMarkup(
         inline_keyboard= [
             [InlineKeyboardButton(text='⛔️Drop Database⛔️', callback_data="drop")],
-            [InlineKeyboardButton(text='🚪Admin🚪', callback_data="admin")],
             [InlineKeyboardButton(text='🗑Delete user🗑', callback_data="delete_user")],
-            [InlineKeyboardButton(text='🛡Ban user🛡', callback_data="spermban")],
+            [InlineKeyboardButton(text='🛡Ban user🛡', callback_data="permban")],
             [InlineKeyboardButton(text='📩Send message to user or users📩', callback_data="send_message")]
         ]
     )
