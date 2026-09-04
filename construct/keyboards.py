@@ -1,22 +1,10 @@
 #----
-from aiogram import Router, F
-from aiogram.enums import ParseMode
-from aiogram.filters import Command
-from aiogram.types import (Message, ReplyKeyboardMarkup,
-                           KeyboardButton,
-                           InlineKeyboardButton,
-                           InlineKeyboardMarkup,
-                           CallbackQuery,
-                           FSInputFile, inline_keyboard_button
-                           )
-from aiogram.types import ReplyKeyboardRemove
+from aiogram import Router
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 import json
 #----
 router = Router()
 #----
-
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 def choose_language():
     keyboard = InlineKeyboardMarkup(inline_keyboard=[

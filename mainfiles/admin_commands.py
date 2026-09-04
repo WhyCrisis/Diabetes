@@ -1,15 +1,12 @@
 #----
-import asyncio
 from os import getenv
-from aiogram import Router, F, Bot
-from aiogram.enums import parse_mode
+from aiogram import Router, F
 from aiogram.filters import Command
 from aiogram.types import (Message,CallbackQuery)
 from dotenv import load_dotenv
 #---
 load_dotenv()
 auid = int(getenv("admin"))
-print(auid)
 #---
 router = Router()
 #----
@@ -19,7 +16,7 @@ from databases.database_SQlite import get_user_anket, delete_user, get_stats_las
 
 #----
 #Keyboards
-from construct.keyboards import choose_language,get_rules_keyboard,hard_reset, fast_admin_things, delete_db
+from construct.keyboards import hard_reset, fast_admin_things, delete_db
 #----
 router.message.filter(F.from_user.id == auid)
 router.callback_query.filter(F.from_user.id == auid)
