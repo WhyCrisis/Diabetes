@@ -107,6 +107,8 @@ async def get_stats_user_language():
             result = await cursor.fetchone()
             return result[0] if result else None
 
+#Команды и проверки для админских команд
+
 
 #-------------------------------------------КОНЕЦ
 
@@ -140,3 +142,43 @@ async def see_admin():
                 return None
             return result
 #-------------------------------------------КОНЕЦ
+
+
+#----Использование базы bans------------------------
+
+db_name_3 = "bans"
+
+async def log_bans():
+    async with aiosqlite.connect(db_name_3) as db:
+        query = (
+            "CREATE TABLE IF NOT EXISTS bans ("
+            "id_admin INT, "
+            "id_user INT, "
+            "reason TEXT, "
+            "Time timestamp DEFAULT CURRENT_TIMESTAMP )"
+        )
+        await db.execute(query)
+        await db.commit()
+
+async def do_bans(id_admin: int, id_user: int, reason):
+    async with aiosqlite.connect(db_name_3) as db:
+        await db.execute(
+            "INSERT OR IGNORE INTO bans (id_admin, id_user, reason) VALUES (?, ?, ?)",
+        (id_admin, id_user, reason)
+        )
+        await db.commit()
+
+async def see_bans():
+    async with aiosqlite.connect(db_name_3) as db:
+        async with db.execute("select * from bans where id_user = ? LIMIT 1;") as cursor:
+            result = await cursor.fetchone()
+            if not result:
+                return None
+            return result
+
+async def unbans(id_user: int):
+    async with aiosqlite.connect(db_name_3) as db:
+        async with db.execute("DELETE FROM bans where id_user = ?;", (id_user,)):
+            await db.commit()
+
+
