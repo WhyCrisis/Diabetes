@@ -1,19 +1,16 @@
 #----
 import json
-import sqlite3
-
 from aiogram import Router, F
 from aiogram.filters import Command
 from aiogram.types import (Message,CallbackQuery)
-
 from aiogram.fsm.context import FSMContext
 #----
 #Databases
-from databases.database_SQlite import log_start, add_user, get_user_anket, delete_user, get_user_language
+from databases.database_SQlite import log_start, add_user, get_user_language
 
 #----
 #Keyboards
-from construct.keyboards import choose_language,get_rules_keyboard,hard_reset
+from construct.keyboards import choose_language,get_rules_keyboard
 from mainfiles import main_menu
 #----
 #FSM
