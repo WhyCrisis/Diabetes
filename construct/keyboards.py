@@ -5,22 +5,6 @@ import json
 #----
 router = Router()
 #----
-
-def choose_language():
-    keyboard = InlineKeyboardMarkup(inline_keyboard=[
-        [
-            InlineKeyboardButton(text="English 🇺🇸", callback_data="en"),
-            InlineKeyboardButton(text="Русский 🇷🇺", callback_data="ru")
-        ],
-        [
-            InlineKeyboardButton(text="Espanol 🇪🇸", callback_data="es"),
-            InlineKeyboardButton(text="Українська 🇺🇦", callback_data="ua")
-        ]
-    ])
-    return keyboard
-
-
-
 def get_rules_keyboard(language: str):
     with open("language_pack/languages_pack.json", "r", encoding="utf-8") as f:
         rules_data = json.load(f)
@@ -35,6 +19,19 @@ def get_rules_keyboard(language: str):
             [InlineKeyboardButton(text='⬅️Change language⬅️', callback_data="cancel")]
         ]
     )
+    return keyboard
+
+def choose_language():
+    keyboard = InlineKeyboardMarkup(inline_keyboard=[
+        [
+            InlineKeyboardButton(text="English 🇺🇸", callback_data="en"),
+            InlineKeyboardButton(text="Русский 🇷🇺", callback_data="ru")
+        ],
+        [
+            InlineKeyboardButton(text="Espanol 🇪🇸", callback_data="es"),
+            InlineKeyboardButton(text="Українська 🇺🇦", callback_data="ua")
+        ]
+    ])
     return keyboard
 
 def back_if_broken():
@@ -58,8 +55,8 @@ def fast_admin_things():
         inline_keyboard= [
             [InlineKeyboardButton(text='⛔️Drop Database⛔️', callback_data="drop")],
             [InlineKeyboardButton(text='🗑Delete user🗑', callback_data="delete_user")],
-            [InlineKeyboardButton(text='🛡Ban user🛡', callback_data="permban")],
-            [InlineKeyboardButton(text='📩Send message to user or users📩', callback_data="send_message")]
+            [InlineKeyboardButton(text='📑See admin logs📑', callback_data="show_admin_logs")],
+            [InlineKeyboardButton(text='📩Add AD📩', callback_data="add_ad")]
         ]
     )
     return keyboard
@@ -68,6 +65,15 @@ def delete_db():
     keyboard = InlineKeyboardMarkup(
         inline_keyboard= [
             [InlineKeyboardButton(text='✅I know what am i doing✅', callback_data="drop_admin")],
+            [InlineKeyboardButton(text='⛔️Back⛔️', callback_data="back_to_admin")]
+        ]
+    )
+    return keyboard
+
+def delete_users():
+    keyboard = InlineKeyboardMarkup(
+        inline_keyboard= [
+            [InlineKeyboardButton(text='✅I know what am i doing✅', callback_data="drop_user")],
             [InlineKeyboardButton(text='⛔️Back⛔️', callback_data="back_to_admin")]
         ]
     )

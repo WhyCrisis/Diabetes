@@ -2,8 +2,12 @@
 from os import getenv
 from aiogram import Router, F
 from aiogram.filters import Command
+from aiogram.fsm.context import FSMContext
 from aiogram.types import (Message,CallbackQuery)
 from dotenv import load_dotenv
+
+from mainfiles.FSM import Delete
+
 #---
 load_dotenv()
 auid = int(getenv("admin"))
@@ -11,17 +15,18 @@ auid = int(getenv("admin"))
 router = Router()
 #----
 #Databases
-from databases.database_SQlite import get_user_anket, delete_user, get_stats_last_join, get_stats_user_language, \
-    get_stats_user_count, log_start, log_admin, do_admin, see_admin
+from databases.database_SQlite import get_users_log_start, delete_user, get_stats_last_join, \
+    get_stats_user_top_language, \
+    get_stats_user_count, log_start, log_admin, do_admin, see_admin, check_delete
 
 #----
 #Keyboards
-from construct.keyboards import hard_reset, fast_admin_things, delete_db
+from construct.keyboards import hard_reset, fast_admin_things, delete_db, delete_users
 #----
 
 @router.message(Command('alo'))
 async def help(message: Message):
-        users = await get_user_anket()
+        users = await get_users_log_start()
         if not users:
             await message.answer('База пустая')
             return
@@ -50,7 +55,7 @@ async def admin_menu_with_things(message: Message):
     if F.from_user.id == auid:
         await log_admin()
         users = await get_stats_user_count()
-        top = await get_stats_user_language()
+        top = await get_stats_user_top_language()
         last = await get_stats_last_join()
 
         text =(f''
@@ -103,32 +108,44 @@ async def back_admin(callback: CallbackQuery):
     await admin_menu_with_things(callback.message)
     await callback.message.delete()
 
-#----Удаление БД
+
 
 #----Удаление пользователя
 
 @router.callback_query(F.data == 'delete_user')
-async def delete_user(callback: CallbackQuery):
+async def delete_user_(callback: CallbackQuery,state: FSMContext):
 
-    checking = callback.from_user.id
+    await callback.answer()
+    await state.clear()
+    await state.set_state(Delete.user_id)
+    await callback.message.answer('Enter the uid of user to delete:')
 
-    if checking != auid:
-        await callback.answer()
-        await callback.answer('Denied! Connect with main admin!')
+@router.message(Delete.user_id)
+async def delete_user(message: Message, state: FSMContext):
+
+    if not message.text.isdigit():
+        await message.answer('Enter the valid uid to delete!')
         return
+
+    id_user = int(message.text)
+    verification = await check_delete(id_user)
+
+    if verification is None:
+        await message.answer('UID is not valid or user does not exist')
+        return
+
     else:
-        await callback.answer(delete_user_2(checking))
+        text=(f'{id_user} is valid! \nPlease confirm manually to delete the user -> {id_user} data')
+        await message.answer(text=text, reply_markup=delete_users())
+        await state.clear()
 
-async def delete_user_2(checking, message: Message):
 
-    if checking == auid:
-        await message.answer('Enter the uid of user to unban:')
 
-        id_user = message.from_user
 
-        if id_user != int:
-            await message.answer('Enter the valid uid to unban!')
-            return
+
+
+
+
 
 
 
