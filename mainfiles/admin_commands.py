@@ -18,8 +18,7 @@ from databases.database_SQlite import get_user_anket, delete_user, get_stats_las
 #Keyboards
 from construct.keyboards import hard_reset, fast_admin_things, delete_db
 #----
-router.message.filter(F.from_user.id == auid)
-router.callback_query.filter(F.from_user.id == auid)
+from mainfiles.FSM import UnBan_form
 #----
 
 @router.message(Command('alo'))
@@ -111,10 +110,28 @@ async def back_admin(callback: CallbackQuery):
 #----Удаление пользователя
 
 @router.callback_query(F.data == 'delete_user')
-async def delete_user(callback: CallbackQuery,message: Message):
-    if message.from_user.id != auid:
-        await callback('Denied')
-        await message.answer('Denied! Connect with main admin!')
+async def delete_user(callback: CallbackQuery):
+
+    checking = callback.from_user.id
+
+    if checking != auid:
+        await callback.answer()
+        await callback.answer('Denied! Connect with main admin!')
+        return
+    else:
+        await callback.answer(delete_user_2(checking))
+
+async def delete_user_2(checking, message: Message):
+
+    if checking == auid:
+        await message.answer('Enter the uid of user to unban:')
+
+        id_user = message.from_user
+
+        if id_user != int:
+            await message.answer('Enter the valid uid to unban!')
+            return
+
 
 
 

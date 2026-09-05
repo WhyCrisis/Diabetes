@@ -8,5 +8,5 @@ class Ban_form(StatesGroup):
     id_user = State()
     reason = State()
 
-
-
+class UnBan_form(StatesGroup):
+    id_user_unban = State()
