@@ -1,8 +1,6 @@
-#Логика взята из конструктора из моего проекта, и что ты мне сделаешь а?
-#Думаю что тут буду хранить логику SQlite что бы быстрее к ней обращаться, а основное будет лежать в PG
+#Вся логика SQLite лежит в данном файле.
+#! Важно к прочтению что, тут строго SQlite!
 import sqlite3
-from argparse import Action
-
 import aiosqlite
 from aiogram import Router
 
@@ -10,7 +8,12 @@ from aiogram import Router
 router = Router()
 #-----
 
-DB_name = "users.db"
+#----Использование базы users----------------
+#
+#
+DB_name = "users.db" #<-------- Использована база для сохранения после того как пользователь пройдет первоначальную регистрацию в боте
+#
+#
 async def log_start():
     async with aiosqlite.connect(DB_name) as db:
         query = (
@@ -21,6 +24,7 @@ async def log_start():
         )
         await db.execute(query)
         await db.commit()
+#Инициализация базы
 
 async def add_user(id_user, language):
     async with aiosqlite.connect(DB_name) as db:
@@ -29,6 +33,7 @@ async def add_user(id_user, language):
             (id_user, language)
         )
         await db.commit()
+#Добавление пользователя в базу после регистрации
 
 async def get_user_anket():
     async with aiosqlite.connect(DB_name) as db:
@@ -47,6 +52,7 @@ async def get_user_anket():
             await db.execute(query)
             await db.commit()
             return []
+#Используется для того что бы база данных не ложилась при удалении через админскую панель и создавалась снова
 
 async def get_user_language(user_id):
     async with aiosqlite.connect(DB_name) as db:
@@ -55,66 +61,34 @@ async def get_user_language(user_id):
             if result is None:
                 return None
             return result[0]
+#Получение имени пользователя из базы для последующей обработки в языковом выборе
 
 
 
-#Админские команды
-
-DB_name_2="log_admin"
-
-#-----Использование базы users-------------
-
-async def delete_user():
-    async with aiosqlite.connect(DB_name) as db:
-        cursor = await db.execute("DROP TABLE users ")
-        await db.commit()
-
-async def spam():
-    async with aiosqlite.connect(DB_name) as db:
-            async with db.execute("SELECT id_user FROM users ") as cursor:
-                result = await cursor.fetchall()
-                return result
-
-async def admins():
-    async with aiosqlite.connect(DB_name_2) as db:
-        query = (
-            "CREATE TABLE IF NOT EXISTS admins ("
-            "id_user INT UNIQUE, "
-            "role TEXT(20),"
-            "assigned_at timestamp DEFAULT CURRENT_TIMESTAMP,"
-            "assigned_by TEXT(20) )"
-        )
-        await db.execute(query)
-        await db.commit()
-        return []
-
-#Использование (статистика) для админского окна
-async def get_stats_last_join():
-    async with aiosqlite.connect(DB_name) as db:
-        async with db.execute("SELECT joinAT FROM users ORDER BY joinAT DESC LIMIT 1;") as cursor:
-            result = await cursor.fetchone()
-            return result[0] if result else None
-
-async def get_stats_user_count():
-    async with aiosqlite.connect(DB_name) as db:
-        async with db.execute("SELECT COUNT(id_user) FROM users;") as cursor:
-            result = await cursor.fetchall()
-            return result[0][0] if result else None
-
-async def get_stats_user_language():
-    async with aiosqlite.connect(DB_name) as db:
-        async with db.execute("SELECT language, COUNT(*) as total FROM users GROUP BY language ORDER BY total DESC LIMIT 1;") as cursor:
-            result = await cursor.fetchone()
-            return result[0] if result else None
-
-#Команды и проверки для админских команд
 
 
 #-------------------------------------------КОНЕЦ
 
 
-#-----Использование базы admins--------------
 
+
+
+
+
+
+
+
+
+
+
+
+
+#-----Использование базы log_admin------------
+#
+#
+DB_name_2="log_admin.db" # <--- Использованная база для записи логов действий администрации через меню администрации
+#
+#
 async def log_admin():
     async with aiosqlite.connect(DB_name_2) as db:
         query = (
@@ -125,6 +99,7 @@ async def log_admin():
         )
         await db.execute(query)
         await db.commit()
+#Создание и запуск базы логирования
 
 async def do_admin(id_user, action):
     async with aiosqlite.connect(DB_name_2) as db:
@@ -133,7 +108,9 @@ async def do_admin(id_user, action):
             (id_user, action)
         )
         await db.commit()
+#Запись действия администратора
 
+#! ВРЕМЕННАЯ ЗАГЛУШКА ДЛЯ ТЕСТОВ (просмотр логов)
 async def see_admin():
     async with aiosqlite.connect(DB_name_2) as db:
         async with db.execute("select * from admins_logs;") as cursor:
@@ -141,44 +118,69 @@ async def see_admin():
             if not result:
                 return None
             return result
+#! ВРЕМЕННАЯ ЗАГЛУШКА ДЛЯ ТЕСТОВ (просмотр логов)
+
+
+#! ВРЕМЕННАЯ ЗАГЛУШКА УДАЛЕНИЯ ПОЛЬЗОВАТЕЛЕЙ
+async def delete_user():
+    async with aiosqlite.connect(DB_name) as db:
+        cursor = await db.execute("DROP TABLE users ")
+        await db.commit()
+#! ВРЕМЕННАЯ ЗАГЛУШКА УДАЛЕНИЯ ПОЛЬЗОВАТЕЛЕЙ
+
+
+
+
+#Статистика админского окна
+
+async def get_stats_last_join():
+    async with aiosqlite.connect(DB_name) as db:
+        async with db.execute("SELECT joinAT FROM users ORDER BY joinAT DESC LIMIT 1;") as cursor:
+            result = await cursor.fetchone()
+            return result[0] if result else None
+#Время последней регистрации
+
+async def get_stats_user_count():
+    async with aiosqlite.connect(DB_name) as db:
+        async with db.execute("SELECT COUNT(id_user) FROM users;") as cursor:
+            result = await cursor.fetchall()
+            return result[0][0] if result else None
+#Количество пользователей (всех) из базы данных
+
+async def get_stats_user_language():
+    async with aiosqlite.connect(DB_name) as db:
+        async with db.execute("SELECT language, COUNT(*) as total FROM users GROUP BY language ORDER BY total DESC LIMIT 1;") as cursor:
+            result = await cursor.fetchone()
+            return result[0] if result else None
+#Самый популярный язык
+
 #-------------------------------------------КОНЕЦ
 
 
-#----Использование базы bans------------------------
 
-db_name_3 = "bans"
+#
+#
+#Проверка на удаление нужного пользователя из админской панели
+#
+#
 
-async def log_bans():
-    async with aiosqlite.connect(db_name_3) as db:
-        query = (
-            "CREATE TABLE IF NOT EXISTS bans ("
-            "id_admin INT, "
-            "id_user INT, "
-            "reason TEXT, "
-            "Time timestamp DEFAULT CURRENT_TIMESTAMP )"
-        )
-        await db.execute(query)
-        await db.commit()
-
-async def do_bans(id_admin: int, id_user: int, reason):
-    async with aiosqlite.connect(db_name_3) as db:
-        await db.execute(
-            "INSERT OR IGNORE INTO bans (id_admin, id_user, reason) VALUES (?, ?, ?)",
-        (id_admin, id_user, reason)
-        )
-        await db.commit()
-
-async def see_bans():
-    async with aiosqlite.connect(db_name_3) as db:
-        async with db.execute("select * from bans where id_user = ? LIMIT 1;") as cursor:
+async def check_delete():
+    async with aiosqlite.connect(DB_name) as db:
+        async with db.execute("select * from users where id_user = ? LIMIT 1;") as cursor:
             result = await cursor.fetchone()
             if not result:
                 return None
             return result
 
-async def unbans(id_user: int):
-    async with aiosqlite.connect(db_name_3) as db:
-        async with db.execute("DELETE FROM bans where id_user = ?;", (id_user,)):
+async def confirm_delete(id_user: int):
+    async with aiosqlite.connect(DB_name) as db:
+        async with db.execute("DELETE FROM users where id_user = ?;", (id_user,)):
             await db.commit()
+
+#
+#
+#-------------------------------------------КОНЕЦ
+
+
 
 
