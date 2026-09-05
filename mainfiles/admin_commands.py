@@ -44,13 +44,6 @@ async def admins_fast_check(message: Message):
             text += f"Айди: {user[0]} | Действие: {user[1]} | Штамп: {user[2]}\n"
         await message.answer(text)
 
-@router.callback_query(F.data == 'drop')
-async def asdads(callback: CallbackQuery):
-    text = ('This command is <b>PERMANENT</b>!\nThat means that no undo of that!\nTo proceed push button below')
-    parse_mode = 'HTML'
-    await callback.message.delete()
-    await callback.answer()
-    await callback.message.answer(text,parse_mode=parse_mode,reply_markup=delete_db())
 
 
 
@@ -75,6 +68,16 @@ async def admin_menu_with_things(message: Message):
         await message.answer(text,parse_mode=parse_mode,reply_markup=reply_markup)
     else:
         message.answer('Denied')
+
+#-----Удаление БД
+
+@router.callback_query(F.data == 'drop')
+async def asdads(callback: CallbackQuery):
+    text = ('This command is <b>PERMANENT</b>!\nThat means that no undo of that!\nTo proceed push button below')
+    parse_mode = 'HTML'
+    await callback.message.delete()
+    await callback.answer()
+    await callback.message.answer(text,parse_mode=parse_mode,reply_markup=delete_db())
 
 @router.callback_query(F.data == 'drop_admin')
 async def drop_admin(callback: CallbackQuery):
@@ -102,3 +105,16 @@ async def back_admin(callback: CallbackQuery):
     await callback.answer()
     await admin_menu_with_things(callback.message)
     await callback.message.delete()
+
+#----Удаление БД
+
+#----Удаление пользователя
+
+@router.callback_query(F.data == 'delete_user')
+async def delete_user(callback: CallbackQuery,message: Message):
+    if message.from_user.id != auid:
+        await callback('Denied')
+        await message.answer('Denied! Connect with main admin!')
+
+
+
