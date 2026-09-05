@@ -26,7 +26,7 @@ async def log_start():
         await db.commit()
 #Инициализация базы
 
-async def add_user(id_user, language):
+async def add_user(id_user: int, language: str):
     async with aiosqlite.connect(DB_name) as db:
         await db.execute(
             "INSERT OR IGNORE INTO users (id_user, language) VALUES (?, ?)",
@@ -35,7 +35,7 @@ async def add_user(id_user, language):
         await db.commit()
 #Добавление пользователя в базу после регистрации
 
-async def get_user_anket():
+async def get_users_log_start():
     async with aiosqlite.connect(DB_name) as db:
         try:
             async with db.execute("SELECT * FROM users ") as cursor:
@@ -54,7 +54,7 @@ async def get_user_anket():
             return []
 #Используется для того что бы база данных не ложилась при удалении через админскую панель и создавалась снова
 
-async def get_user_language(user_id):
+async def get_user_language(user_id:int):
     async with aiosqlite.connect(DB_name) as db:
         async with db.execute("SELECT language FROM users WHERE id_user = ? LIMIT 1", (user_id,)) as cursor:
             result = await cursor.fetchone()
@@ -101,7 +101,7 @@ async def log_admin():
         await db.commit()
 #Создание и запуск базы логирования
 
-async def do_admin(id_user, action):
+async def do_admin(id_user: int, action:str):
     async with aiosqlite.connect(DB_name_2) as db:
         await db.execute(
             "INSERT OR IGNORE INTO admins_logs (id_user, action) VALUES (?, ?)",
@@ -147,7 +147,7 @@ async def get_stats_user_count():
             return result[0][0] if result else None
 #Количество пользователей (всех) из базы данных
 
-async def get_stats_user_language():
+async def get_stats_user_top_language():
     async with aiosqlite.connect(DB_name) as db:
         async with db.execute("SELECT language, COUNT(*) as total FROM users GROUP BY language ORDER BY total DESC LIMIT 1;") as cursor:
             result = await cursor.fetchone()
@@ -164,9 +164,9 @@ async def get_stats_user_language():
 #
 #
 
-async def check_delete():
+async def check_delete(id_user: int):
     async with aiosqlite.connect(DB_name) as db:
-        async with db.execute("select * from users where id_user = ? LIMIT 1;") as cursor:
+        async with db.execute("select * from users where id_user = ?", (id_user,)) as cursor:
             result = await cursor.fetchone()
             if not result:
                 return None
@@ -174,7 +174,7 @@ async def check_delete():
 
 async def confirm_delete(id_user: int):
     async with aiosqlite.connect(DB_name) as db:
-        async with db.execute("DELETE FROM users where id_user = ?;", (id_user,)):
+        async with db.execute("DELETE FROM users where id_user = ?", (id_user,)):
             await db.commit()
 
 #
