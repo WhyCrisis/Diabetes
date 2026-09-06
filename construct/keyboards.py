@@ -78,3 +78,11 @@ def delete_users():
         ]
     )
     return keyboard
+
+def back_to_admin():
+    keyboard = InlineKeyboardMarkup(
+        inline_keyboard= [
+            [InlineKeyboardButton(text='⛔️Back⛔️', callback_data="back_to_admin")]
+        ]
+    )
+    return keyboard
