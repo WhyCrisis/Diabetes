@@ -93,7 +93,7 @@ async def log_admin():
     async with aiosqlite.connect(DB_name_2) as db:
         query = (
             "CREATE TABLE IF NOT EXISTS admins_logs ("
-            "id_user INT UNIQUE, "
+            "id_admin INT UNIQUE, "
             "action TEXT,"
             "Time timestamp DEFAULT CURRENT_TIMESTAMP )"
         )
@@ -104,7 +104,7 @@ async def log_admin():
 async def do_admin(id_user: int, action:str):
     async with aiosqlite.connect(DB_name_2) as db:
         await db.execute(
-            "INSERT OR IGNORE INTO admins_logs (id_user, action) VALUES (?, ?)",
+            "INSERT OR IGNORE INTO admins_logs (id_admin, action) VALUES (?, ?)",
             (id_user, action)
         )
         await db.commit()
