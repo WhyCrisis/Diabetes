@@ -153,11 +153,6 @@ async def get_stats_user_top_language():
             result = await cursor.fetchone()
             return result[0] if result else None
 #Самый популярный язык
-
-#-------------------------------------------КОНЕЦ
-
-
-
 #
 #
 #Проверка на удаление нужного пользователя из админской панели

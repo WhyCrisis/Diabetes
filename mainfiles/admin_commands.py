@@ -1,7 +1,7 @@
 #----
 from os import getenv
 from aiogram import Router, F
-from aiogram.filters import Command
+from aiogram.filters import Command, state
 from aiogram.fsm.context import FSMContext
 from aiogram.types import (Message,CallbackQuery)
 from dotenv import load_dotenv
@@ -17,7 +17,7 @@ router = Router()
 #Databases
 from databases.database_SQlite import get_users_log_start, delete_user, get_stats_last_join, \
     get_stats_user_top_language, \
-    get_stats_user_count, log_start, log_admin, do_admin, see_admin, check_delete
+    get_stats_user_count, log_start, log_admin, do_admin, see_admin, check_delete, confirm_delete
 
 #----
 #Keyboards
@@ -117,11 +117,13 @@ async def delete_user_(callback: CallbackQuery,state: FSMContext):
 
     await callback.answer()
     await state.clear()
-    await state.set_state(Delete.user_id)
+    await state.set_state(Delete.id_user)
     await callback.message.answer('Enter the uid of user to delete:')
 
-@router.message(Delete.user_id)
+@router.message(Delete.id_user)
 async def delete_user(message: Message, state: FSMContext):
+
+
 
     if not message.text.isdigit():
         await message.answer('Enter the valid uid to delete!')
@@ -137,8 +139,24 @@ async def delete_user(message: Message, state: FSMContext):
     else:
         text=(f'{id_user} is valid! \nPlease confirm manually to delete the user -> {id_user} data')
         await message.answer(text=text, reply_markup=delete_users())
-        await state.clear()
+        await state.update_data(id_user=id_user)
 
+@router.callback_query(F.data == 'drop_user')
+async def drop_user(callback: CallbackQuery, id_user: int):
+    await callback.answer()
+    await callback.message.delete()
+
+    data = await state.get_data()
+    id_user = data['id_user']
+    action = f'User drop! {id_user}'
+
+    await callback.answer('Deleted! This action is in log now!', show_alert=True)
+
+    await do_admin(id_user, action)
+    await confirm_delete(id_user)
+
+    await do_admin(id_user, action)
+    await admin_menu_with_things(callback.message)
 
 
 

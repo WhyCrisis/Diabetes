@@ -4,4 +4,5 @@ class Form(StatesGroup):
     lang = State()
 
 class Delete(StatesGroup):
-    user_id = State()
+    id_user = State()
+
