@@ -2,11 +2,15 @@
 from aiogram import Router
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 import json
+import os
 #----
-router = Router()
+current_dir = os.path.dirname(os.path.abspath(__file__))
+json_path = os.path.join(current_dir, "start_language.json")
+with open(json_path, "r", encoding="utf-8") as f:
+    TRANSLATIONS = json.load(f)
 #----
 def get_rules_keyboard(language: str):
-    with open("src/Start/start_language.json", "r", encoding="utf-8") as f:
+    with open(json_path, "r", encoding="utf-8") as f:
         rules_data = json.load(f)
 
     # Если переданного языка нет в файле, берем английский по умолчанию
