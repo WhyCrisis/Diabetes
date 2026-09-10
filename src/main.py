@@ -3,11 +3,12 @@ import asyncio
 from aiogram import Bot, Dispatcher
 from dotenv import load_dotenv
 #---
-from src.mainfiles.admin_commands import router as admin_router
-from src.Start.start_menu import router as starter_router
-from src.construct.keyboards import router as constructor_router
-from src.databases.database_SQlite import router as database_router, log_start
-from src.mainfiles.main_menu import router as menu_router
+from src.Admin.admin_menu import router as admin_router
+from src.Start.start_menu import router as start_router
+from src.Menu.menu_main import router as menu_router
+
+#---Инициализация БД
+from src.Start.start_SQL import log_start
 #---
 load_dotenv()
 TOKEN = getenv("BOT_TOKEN")
@@ -18,9 +19,7 @@ DB_name = "DB_start"
 #подключение новых роутеров
 dp = Dispatcher()
 dp.include_router(admin_router)
-dp.include_router(starter_router)
-dp.include_router(constructor_router)
-dp.include_router(database_router)
+dp.include_router(start_router)
 dp.include_router(menu_router)
 #---
 
