@@ -4,14 +4,15 @@ from aiogram import Router, F
 from aiogram.filters import Command
 from aiogram.types import (Message,CallbackQuery)
 from aiogram.fsm.context import FSMContext
+import os
+import json
 #----
 #Databases
 from src.Start.start_SQL import log_start, add_user, get_user_language
-
 #----
 #Keyboards
 from src.Start.start_keyboard import choose_language,get_rules_keyboard
-from mainfiles import main_menu
+from src.Menu.menu_main import launch_menu
 #----
 #FSM
 from src.Start.start_FSM import Form
@@ -20,8 +21,11 @@ router = Router()
 #----
 
 #----
-with open("src/start/start_language.json", "r", encoding="utf-8") as f:
+current_dir = os.path.dirname(os.path.abspath(__file__))
+json_path = os.path.join(current_dir, "start_language.json")
+with open(json_path, "r", encoding="utf-8") as f:
     TRANSLATIONS = json.load(f)
+
 def get_text(lang: str, key: str):
     return TRANSLATIONS.get(lang, {}).get(key, key)
 #----
@@ -52,7 +56,7 @@ async def start(message: Message, state: FSMContext):
             parse_mode='HTML',
             reply_markup=choose_language())
     else:
-        await main_menu.launch_menu(message, user_id)
+        await launch_menu(message, user_id)
 
 
 @router.callback_query(F.data.in_({"ru", "en", "es", "ua"}))
@@ -86,7 +90,7 @@ async def process_agree(callback: CallbackQuery, state: FSMContext):
     await state.clear()
     await callback.answer()
     await callback.message.delete()
-    await main_menu.launch_menu(callback.message, user_id)
+    await launch_menu(callback.message, user_id)
 
 
 @router.callback_query(F.data=='cancel')
