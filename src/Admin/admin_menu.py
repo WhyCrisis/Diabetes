@@ -19,7 +19,7 @@ from databases.database_SQlite import get_users_log_start, delete_user, get_stat
 
 #----
 #Keyboards
-from construct.keyboards import hard_reset, fast_admin_things, delete_db, delete_users, back_to_admin
+from src.Admin.admin_keyboard import hard_reset, fast_admin_things, delete_db, delete_users, back_to_admin
 
 
 #----
