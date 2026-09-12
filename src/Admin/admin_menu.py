@@ -24,19 +24,32 @@ from src.Admin.admin_keyboard import fast_admin_things, delete_db, delete_users,
 
 #----
 
-@router.message(Command('alo'))
-async def help(message: Message):
-        users = await get_users_log_start()
-        if not users:
-            await message.answer('База пустая')
-            return
-        text = 'Текущие пользователи:\n\n'
-        for user in users:
-            text += f"Айди: {user[0]} | Язык: {user[1]} | Штамп: {user[2]}\n"
-        await message.answer(text)
+@router.callback_query(F.data == 'check_users')
+async def help(callback:CallbackQuery):
+    if callback.from_user.id != auid:
+        await callback.answer()
+        await callback.message.answer('Access denied', show_alert=True)
+        return
+
+
+    await callback.answer()
+    users = await get_users_log_start()
+    if not users:
+        await callback.message.answer('База пользователей пуста!')
+        return
+    text = 'Текущие пользователи:\n\n'
+    for user in users:
+        text += f"Айди: {user[0]} | Язык: {user[1]} | Штамп: {user[2]}\n"
+        await callback.message.answer(text)
 
 @router.callback_query(F.data == 'show_admin_logs')
 async def admins_fast_check(callback: CallbackQuery):
+        if callback.from_user.id != auid:
+            await callback.message.answer('Access denied', show_alert=True)
+            await callback.answer()
+            return
+
+        await callback.answer()
         users = await see_admin()
         if not users:
             await callback.message.answer('База пустая')
@@ -73,6 +86,11 @@ async def admin_menu_with_things(message: Message):
 
 @router.callback_query(F.data == 'drop')
 async def asdads(callback: CallbackQuery):
+    if callback.from_user.id != auid:
+        await callback.message.answer('Access denied', show_alert=True)
+        await callback.answer()
+        return
+
     text = ('This command is <b>PERMANENT</b>!\nThat means that no undo of that!\nTo proceed push button below')
     parse_mode = 'HTML'
     await callback.message.delete()
@@ -114,14 +132,19 @@ async def back_admin(callback: CallbackQuery, state: FSMContext):
 
 @router.callback_query(F.data == 'delete_user')
 async def delete_user_(callback: CallbackQuery,state: FSMContext):
+    if callback.from_user.id != auid:
+        await callback.answer()
+        await callback.message.answer('Access denied', show_alert=True)
+        return
 
+    await callback.message.delete()
     await callback.answer()
     await state.clear()
     await state.set_state(Delete.id_user)
     await callback.message.answer('Enter the uid of user to delete:', reply_markup=back_to_admin())
 
 @router.message(Delete.id_user)
-async def delete_user(message: Message, state: FSMContext):
+async def true_user(message: Message, state: FSMContext):
 
     if not message.text.isdigit():
         await message.answer('Enter the valid uid to delete!', reply_markup=back_to_admin())
@@ -143,8 +166,6 @@ async def delete_user(message: Message, state: FSMContext):
 async def drop_user(callback: CallbackQuery, state: FSMContext):
     await callback.answer()
     await callback.message.delete()
-
-
     #------
     user_data = await state.get_data()
     id_user = user_data.get('id_user')
@@ -152,22 +173,8 @@ async def drop_user(callback: CallbackQuery, state: FSMContext):
     id_admin = callback.from_user.id
     action = f'User drop! {id_user}'
     #------
-
-
     await delete_user(id_user)
     await do_admin(id_admin, action)
 
-
     await callback.answer('Deleted! This action is in log now!')
     await admin_menu_with_things(callback.message)
-
-
-
-
-
-
-
-
-
-
-
