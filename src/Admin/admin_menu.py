@@ -1,11 +1,11 @@
 #----
 from os import getenv
 from aiogram import Router, F
-from aiogram.filters import Command, state
+from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 from aiogram.types import (Message,CallbackQuery)
 from dotenv import load_dotenv
-from mainfiles.FSM import Delete
+from src.Admin.admin_FSM import Delete
 #---
 load_dotenv()
 auid = int(getenv("admin"))
@@ -13,13 +13,13 @@ auid = int(getenv("admin"))
 router = Router()
 #----
 #Databases
-from databases.database_SQlite import get_users_log_start, delete_user, get_stats_last_join, \
+from SQL.admin_SQL import get_users_log_start, get_stats_last_join, \
     get_stats_user_top_language, \
-    get_stats_user_count, log_start, log_admin, do_admin, see_admin, check_delete, confirm_delete
+    get_stats_user_count, log_start, log_admin, do_admin, see_admin, check_delete, delete_user, drop_user_table
 
 #----
 #Keyboards
-from src.Admin.admin_keyboard import hard_reset, fast_admin_things, delete_db, delete_users, back_to_admin
+from src.Admin.admin_keyboard import fast_admin_things, delete_db, delete_users, back_to_admin
 
 
 #----
@@ -33,7 +33,7 @@ async def help(message: Message):
         text = 'Текущие пользователи:\n\n'
         for user in users:
             text += f"Айди: {user[0]} | Язык: {user[1]} | Штамп: {user[2]}\n"
-        await message.answer(text,reply_markup=hard_reset())
+        await message.answer(text)
 
 @router.callback_query(F.data == 'show_admin_logs')
 async def admins_fast_check(callback: CallbackQuery):
@@ -80,12 +80,12 @@ async def asdads(callback: CallbackQuery):
     await callback.message.answer(text,parse_mode=parse_mode,reply_markup=delete_db())
 
 @router.callback_query(F.data == 'drop_admin')
-async def drop_admin(callback: CallbackQuery):
+async def drop_admin(callback: CallbackQuery, state:FSMContext):
 
     #---Логирование---
-    id_user = callback.from_user.id
+    id_admin = callback.from_user.id
     action = 'Database drop'
-    await do_admin(id_user, action)
+    await do_admin(id_admin, action)
     print(action)
     #---Логирование---
 
@@ -93,7 +93,8 @@ async def drop_admin(callback: CallbackQuery):
     await callback.answer()
 
     #Удаление и создание новой базы
-    await delete_user()
+    await drop_user_table()
+    await state.clear()
     #Создание
     await log_start()
 
@@ -121,8 +122,6 @@ async def delete_user_(callback: CallbackQuery,state: FSMContext):
 
 @router.message(Delete.id_user)
 async def delete_user(message: Message, state: FSMContext):
-
-
 
     if not message.text.isdigit():
         await message.answer('Enter the valid uid to delete!', reply_markup=back_to_admin())
@@ -155,7 +154,7 @@ async def drop_user(callback: CallbackQuery, state: FSMContext):
     #------
 
 
-    await confirm_delete(id_user)
+    await delete_user(id_user)
     await do_admin(id_admin, action)
 
 
