@@ -31,7 +31,6 @@ async def do_admin(id_admin: int, action:str):
         await db.commit()
 #Запись действия администратора
 
-#! ВРЕМЕННАЯ ЗАГЛУШКА ДЛЯ ТЕСТОВ (просмотр логов)
 async def see_admin():
     async with aiosqlite.connect(DB_name_2) as db:
         async with db.execute("select * from admins_logs;") as cursor:
@@ -39,18 +38,12 @@ async def see_admin():
             if not result:
                 return None
             return result
-#! ВРЕМЕННАЯ ЗАГЛУШКА ДЛЯ ТЕСТОВ (просмотр логов)
-
 
 # Удаление пользователя
 async def drop_user_table():
     async with aiosqlite.connect(DB_name) as db:
         cursor = await db.execute("DROP TABLE users ")
         await db.commit()
-
-
-
-
 
 #Статистика админского окна
 
