@@ -1,5 +1,6 @@
 #----
 import aiosqlite
+import sqlite3
 #----
 
 #-----Использование базы log_admin------------
@@ -13,7 +14,7 @@ async def log_admin():
     async with aiosqlite.connect(DB_name_2) as db:
         query = (
             "CREATE TABLE IF NOT EXISTS admins_logs ("
-            "id_admin INT UNIQUE, "
+            "id_admin INT, "
             "action TEXT,"
             "Time timestamp DEFAULT CURRENT_TIMESTAMP )"
         )
@@ -21,11 +22,11 @@ async def log_admin():
         await db.commit()
 #Создание и запуск базы логирования
 
-async def do_admin(id_user: int, action:str):
+async def do_admin(id_admin: int, action:str):
     async with aiosqlite.connect(DB_name_2) as db:
         await db.execute(
             "INSERT OR IGNORE INTO admins_logs (id_admin, action) VALUES (?, ?)",
-            (id_user, action)
+            (id_admin, action)
         )
         await db.commit()
 #Запись действия администратора
@@ -41,12 +42,12 @@ async def see_admin():
 #! ВРЕМЕННАЯ ЗАГЛУШКА ДЛЯ ТЕСТОВ (просмотр логов)
 
 
-#! ВРЕМЕННАЯ ЗАГЛУШКА УДАЛЕНИЯ ПОЛЬЗОВАТЕЛЕЙ
-async def delete_user():
+# Удаление пользователя
+async def drop_user_table():
     async with aiosqlite.connect(DB_name) as db:
         cursor = await db.execute("DROP TABLE users ")
         await db.commit()
-#! ВРЕМЕННАЯ ЗАГЛУШКА УДАЛЕНИЯ ПОЛЬЗОВАТЕЛЕЙ
+
 
 
 
@@ -87,9 +88,36 @@ async def check_delete(id_user: int):
                 return None
             return result
 
-async def confirm_delete(id_user: int):
+async def delete_user(id_user: int):
     async with aiosqlite.connect(DB_name) as db:
         async with db.execute("DELETE FROM users where id_user = ?", (id_user,)):
             await db.commit()
 
-#
+async def get_users_log_start():
+    async with aiosqlite.connect(DB_name) as db:
+        try:
+            async with db.execute("SELECT * FROM users ") as cursor:
+                result = await cursor.fetchall()
+                return result
+
+        except sqlite3.OperationalError as e:
+            query = (
+                "CREATE TABLE IF NOT EXISTS users ("
+                "id_user INT UNIQUE, "
+                "language TEXT,"
+                "joinAT timestamp DEFAULT CURRENT_TIMESTAMP )"
+            )
+            await db.execute(query)
+            await db.commit()
+            return []
+
+async def log_start():
+    async with aiosqlite.connect(DB_name) as db:
+        query = (
+            "CREATE TABLE IF NOT EXISTS users ("
+            "id_user INTEGER UNIQUE, "
+            "language TEXT, "
+            "joinAT DATETIME DEFAULT CURRENT_TIMESTAMP )"
+        )
+        await db.execute(query)
+        await db.commit()
