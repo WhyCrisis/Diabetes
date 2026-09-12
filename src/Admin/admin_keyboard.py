@@ -10,6 +10,7 @@ def fast_admin_things():
             [InlineKeyboardButton(text='⛔️Drop Database⛔️', callback_data="drop")],
             [InlineKeyboardButton(text='🗑Delete user🗑', callback_data="delete_user")],
             [InlineKeyboardButton(text='📑See admin logs📑', callback_data="show_admin_logs")],
+            [InlineKeyboardButton(text='🗑See users🗑', callback_data="check_users")],
             [InlineKeyboardButton(text='📩Add AD📩', callback_data="add_ad")]
         ]
     )
