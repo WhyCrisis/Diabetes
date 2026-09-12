@@ -18,9 +18,9 @@ async def log_start():
     async with aiosqlite.connect(DB_name) as db:
         query = (
             "CREATE TABLE IF NOT EXISTS users ("
-            "id_user INT UNIQUE, "
-            "language TEXT,"
-            "joinAT timestamp DEFAULT CURRENT_TIMESTAMP )"
+            "id_user INTEGER UNIQUE, "
+            "language TEXT, "
+            "joinAT DATETIME DEFAULT CURRENT_TIMESTAMP )"
         )
         await db.execute(query)
         await db.commit()
