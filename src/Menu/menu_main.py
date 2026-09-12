@@ -1,21 +1,12 @@
 # ----
-from aiogram import Router, F
-from aiogram.enums import ParseMode
-from aiogram.types import (Message, ReplyKeyboardMarkup,
-                           KeyboardButton,
-                           InlineKeyboardButton,
-                           InlineKeyboardMarkup,
-                           CallbackQuery,
-                           FSInputFile
+from aiogram import Router
+from aiogram.types import (Message
                            )
-from aiogram.types import ReplyKeyboardRemove
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
-import json
 import os
 import json
 # ----
 # Databases
-from src.Start.start_SQL import get_user_language
+from SQL.start_SQL import get_user_language
 # ----
 # keyboards
 from src.Menu.main_keyboard import back_if_broken

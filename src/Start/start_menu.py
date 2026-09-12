@@ -1,5 +1,4 @@
 #----
-import json
 from aiogram import Router, F
 from aiogram.filters import Command
 from aiogram.types import (Message,CallbackQuery)
@@ -8,7 +7,7 @@ import os
 import json
 #----
 #Databases
-from src.Start.start_SQL import log_start, add_user, get_user_language
+from SQL.start_SQL import log_start, add_user, get_user_language
 #----
 #Keyboards
 from src.Start.start_keyboard import choose_language,get_rules_keyboard

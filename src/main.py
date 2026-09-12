@@ -9,7 +9,7 @@ from src.Start.start_menu import router as start_router
 from src.Menu.menu_main import router as menu_router
 
 #---Инициализация БД
-from src.Start.start_SQL import log_start
+from SQL.start_SQL import log_start
 
 load_dotenv()
 TOKEN = getenv("BOT_TOKEN")
@@ -29,7 +29,7 @@ dp.include_router(menu_router)
 #---инициализация
 async def main():
     print("Запущено")
-    log_start()
+    await log_start()
     await dp.start_polling(bot)
 
 #---
