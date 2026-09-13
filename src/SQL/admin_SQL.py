@@ -16,8 +16,8 @@ DB_name = "users.db" # <--- Использованная база для про�
 async def get_users_log_start():
     async with aiosqlite.connect(DB_name) as db:
         try:
-            async with db.execute("SELECT * FROM users ") as cursor:
-                result = await cursor.fetchall()
+            async with db.execute("SELECT id_user from users ORDER BY RANDOM() LIMIT 1;") as cursor:
+                result = await cursor.fetchone()
                 return result
 
         except sqlite3.OperationalError as e:
@@ -43,8 +43,10 @@ async def log_start():
         await db.commit()
 #------------------------------------------------------------------------------------------#
 #Запись действия администратора через инициализацию базы данных "admin_logs" и последующая запись
-#------------------------------------------------------------------------------------------
-async def log_admin():
+#------------------------------------------------------------------------------------------#
+#Работа с базой "admin_logs"
+#------------------------------------------------------------------------------------------#
+async def log_admins_logs():
     async with aiosqlite.connect(DB_name_2) as db:
         query = (
             "CREATE TABLE IF NOT EXISTS admins_logs ("
@@ -54,22 +56,27 @@ async def log_admin():
         )
         await db.execute(query)
         await db.commit()
-
-async def do_admin(id_admin: int, action: str):
-    async with aiosqlite.connect(DB_name_2) as db:
-        await db.execute(
-            "INSERT OR IGNORE INTO admins_logs (id_admin, action) VALUES (?, ?)",
-            (id_admin, action)
-        )
-        await db.commit()
-
 async def see_admin_logs():
     async with aiosqlite.connect(DB_name_2) as db:
-        async with db.execute("select * from admins_logs;") as cursor:
+        async with db.execute("SELECT * FROM admins_logs;") as cursor:
             result = await cursor.fetchall()
             if not result:
                 return None
             return result
+
+async def do_admins_logs(id_admin: int, action: str):
+    async with aiosqlite.connect(DB_name_2) as db:
+        await db.execute(
+            "INSERT INTO admins_logs (id_admin, action) VALUES (?, ?) ON CONFLICT (id_admin, action) DO NOTHING",
+            (id_admin, action)
+        )
+        await db.commit()
+
+async def drop_logs_table():
+    async with aiosqlite.connect(DB_name_2) as db:
+        await db.execute("DROP TABLE IF EXISTS admins_logs")
+        await db.commit()
+
 # ------------------------------------------------------------------------------------------#
 # Статистика админского окна после команды /get_menu_with_things
 # ------------------------------------------------------------------------------------------#
@@ -83,8 +90,8 @@ async def get_stats_last_join():
 async def get_stats_user_count():
     async with aiosqlite.connect(DB_name) as db:
         async with db.execute("SELECT COUNT(id_user) FROM users;") as cursor:
-            result = await cursor.fetchall()
-            return result[0][0] if result else None
+            result = await cursor.fetchone()
+            return result[0] if result else None
 # Количество пользователей (всех) из базы данных
 
 async def get_stats_user_top_language():
@@ -100,7 +107,7 @@ async def get_stats_user_top_language():
 # ------------------------------------------------------------------------------------------#
 async def drop_user_table():
     async with aiosqlite.connect(DB_name) as db:
-        cursor = await db.execute("DROP TABLE users ")
+        cursor = await db.execute("DROP TABLE IF EXISTS users ")
         await db.commit()
 
 #------------------------------------------------------------------------------------------#
@@ -108,7 +115,7 @@ async def drop_user_table():
 #------------------------------------------------------------------------------------------#
 async def check_delete(id_user: int):
     async with aiosqlite.connect(DB_name) as db:
-        async with db.execute("select * from users where id_user = ?", (id_user,)) as cursor:
+        async with db.execute("SELECT * FROM users WHERE id_user = ?", (id_user,)) as cursor:
             result = await cursor.fetchone()
             if not result:
                 return None
@@ -116,8 +123,8 @@ async def check_delete(id_user: int):
 
 async def delete_user(id_user: int):
     async with aiosqlite.connect(DB_name) as db:
-        async with db.execute("DELETE FROM users where id_user = ?", (id_user,)):
-            await db.commit()
+        await db.execute("DELETE FROM users WHERE id_user = ?", (id_user,))
+        await db.commit()
 #------------------------------------------------------------------------------------------#
 #
 #------------------------------------------------------------------------------------------#
