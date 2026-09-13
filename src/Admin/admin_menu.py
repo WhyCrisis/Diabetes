@@ -15,7 +15,7 @@ router = Router()
 #Databases
 from SQL.admin_SQL import get_users_log_start, get_stats_last_join, \
     get_stats_user_top_language, \
-    get_stats_user_count, log_start, log_admin, do_admin, see_admin, check_delete, delete_user, drop_user_table
+    get_stats_user_count, log_start, log_admins_logs, do_admins_logs, see_admins_logs, check_delete, delete_user, drop_user_table
 
 #----
 #Keyboards
@@ -50,7 +50,7 @@ async def admins_fast_check(callback: CallbackQuery):
             return
 
         await callback.answer()
-        users = await see_admin()
+        users = await see_admins_logs()
         if not users:
             await callback.message.answer('База пустая')
             return
@@ -64,7 +64,7 @@ async def admins_fast_check(callback: CallbackQuery):
 @router.message(Command('admin_menu_with_things'))
 async def admin_menu_with_things(message: Message):
     if F.from_user.id == auid:
-        await log_admin()
+        await log_admins_logs()
         users = await get_stats_user_count()
         top = await get_stats_user_top_language()
         last = await get_stats_last_join()
@@ -101,9 +101,9 @@ async def asdads(callback: CallbackQuery):
 async def drop_admin(callback: CallbackQuery, state:FSMContext):
 
     #---Логирование---
-    id_admin = callback.from_user.id
+    admin_id = callback.from_user.id
     action = 'Database drop'
-    await do_admin(id_admin, action)
+    await do_admins_logs(admin_id, action)
     print(action)
     #---Логирование---
 
@@ -140,27 +140,27 @@ async def delete_user_(callback: CallbackQuery,state: FSMContext):
     await callback.message.delete()
     await callback.answer()
     await state.clear()
-    await state.set_state(Delete.id_user)
+    await state.set_state(Delete.user_id)
     await callback.message.answer('Enter the uid of user to delete:', reply_markup=back_to_admin())
 
-@router.message(Delete.id_user)
+@router.message(Delete.user_id)
 async def true_user(message: Message, state: FSMContext):
 
     if not message.text.isdigit():
         await message.answer('Enter the valid uid to delete!', reply_markup=back_to_admin())
         return
 
-    id_user = int(message.text)
-    verification = await check_delete(id_user)
+    user_id = int(message.text)
+    verification = await check_delete(user_id)
 
     if verification is None:
         await message.answer('UID is not valid or user does not exist', reply_markup=back_to_admin())
         return
 
     else:
-        text=(f'{id_user} is valid! \nPlease confirm manually to delete the user -> {id_user} data')
+        text=(f'{user_id} is valid! \nPlease confirm manually to delete the user -> {user_id} data')
         await message.answer(text=text, reply_markup=delete_users())
-        await state.update_data(id_user=id_user)
+        await state.update_data(user_id=user_id)
 
 @router.callback_query(F.data == 'drop_user')
 async def drop_user(callback: CallbackQuery, state: FSMContext):
@@ -168,13 +168,13 @@ async def drop_user(callback: CallbackQuery, state: FSMContext):
     await callback.message.delete()
     #------
     user_data = await state.get_data()
-    id_user = user_data.get('id_user')
+    user_id = user_data.get('user_id')
     #------
-    id_admin = callback.from_user.id
-    action = f'User drop! {id_user}'
+    admin_id = callback.from_user.id
+    action = f'User drop! {user_id}'
     #------
-    await delete_user(id_user)
-    await do_admin(id_admin, action)
+    await delete_user(user_id)
+    await do_admins_logs(admin_id, action)
 
     await callback.answer('Deleted! This action is in log now!')
     await admin_menu_with_things(callback.message)
