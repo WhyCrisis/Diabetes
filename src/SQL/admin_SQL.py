@@ -7,7 +7,7 @@ import sqlite3
 #
 #
 DB_name_2="log_admin.db" # <--- Использованная база для записи логов действий администрации через меню администрации
-DB_name = "users.db" # <--- Использованная база для просмотора юзеров и админского функционала
+DB_name = "users.db" # <--- Использованная база для просмотра юзеров и админского функционала
 #
 #
 #------------------------------------------------------------------------------------------#
@@ -20,7 +20,7 @@ async def get_users_log_start():
                 result = await cursor.fetchone()
                 return result
 
-        except sqlite3.OperationalError as e:
+        except sqlite3.OperationalError:
             query = (
                 "CREATE TABLE IF NOT EXISTS users ("
                 "id_user INT UNIQUE, "
@@ -56,6 +56,7 @@ async def log_admins_logs():
         )
         await db.execute(query)
         await db.commit()
+
 async def see_admin_logs():
     async with aiosqlite.connect(DB_name_2) as db:
         async with db.execute("SELECT * FROM admins_logs;") as cursor:
@@ -73,9 +74,12 @@ async def do_admins_logs(id_admin: int, action: str):
         await db.commit()
 
 async def drop_logs_table():
-    async with aiosqlite.connect(DB_name_2) as db:
-        await db.execute("DROP TABLE IF EXISTS admins_logs")
-        await db.commit()
+    try:
+        async with aiosqlite.connect(DB_name_2) as db:
+            await db.execute("DROP TABLE IF EXISTS admins_logs")
+            await db.commit()
+    except Exception as e:
+        print(f"An error occurred: {e}")
 
 # ------------------------------------------------------------------------------------------#
 # Статистика админского окна после команды /get_menu_with_things
@@ -106,9 +110,12 @@ async def get_stats_user_top_language():
 # Удаление базы данных USERS
 # ------------------------------------------------------------------------------------------#
 async def drop_user_table():
-    async with aiosqlite.connect(DB_name) as db:
-        cursor = await db.execute("DROP TABLE IF EXISTS users ")
-        await db.commit()
+    try:
+        async with aiosqlite.connect(DB_name) as db:
+            await db.execute("DROP TABLE IF EXISTS users")
+            await db.commit()
+    except Exception as e:
+        print(f"An error occurred: {e}")
 
 #------------------------------------------------------------------------------------------#
 #Удаление пользователя из базы данных + проверки
