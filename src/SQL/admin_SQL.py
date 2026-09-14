@@ -17,8 +17,7 @@ async def get_users_log_start():
     async with aiosqlite.connect(DB_name) as db:
         try:
             async with db.execute("SELECT user_id from users ORDER BY RANDOM() LIMIT 1;") as cursor:
-                result = await cursor.fetchone()
-                return result
+                return await cursor.fetchall()
 
         except sqlite3.OperationalError:
             query = (
@@ -86,7 +85,7 @@ async def drop_logs_table():
 # ------------------------------------------------------------------------------------------#
 async def get_stats_last_join():
     async with aiosqlite.connect(DB_name) as db:
-        async with db.execute("SELECT joinAT FROM users ORDER BY joinAT DESC LIMIT 1;") as cursor:
+        async with db.execute("SELECT Stamp FROM users ORDER BY Stamp DESC LIMIT 1;") as cursor:
             result = await cursor.fetchone()
             return result[0] if result else None
 # Время последней регистрации

@@ -20,7 +20,7 @@ async def log_start():
             "CREATE TABLE IF NOT EXISTS users ("
             "user_id INTEGER UNIQUE, "
             "language TEXT, "
-            "joinAT DATETIME DEFAULT CURRENT_TIMESTAMP )"
+            "joinAt DATETIME DEFAULT CURRENT_TIMESTAMP )"
         )
         await db.execute(query)
         await db.commit()
